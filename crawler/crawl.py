@@ -5,6 +5,7 @@ from collections import defaultdict
 from copy import deepcopy
 import logging
 from datetime import datetime
+from time import sleep
 
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
@@ -206,41 +207,40 @@ def crawl_en_nejm(driver, output, verbose=False):
 	if detect_paywall(driver):
 		raise RuntimeError("Paywall detected.")
 
+	xpath_query = "//div[@class='m-inline-tabs__tab s-active']"
+	body = driver.find_element_by_xpath(xpath_query)
+
 	xpath_query = "//*[self::h2 or self::h3 or self::p]"
-	elements = driver.find_elements_by_xpath(xpath_query)
+	elements = body.find_elements_by_xpath(xpath_query)
+
 	with open(output, "w") as f:	
 
 		for i, elem in enumerate(elements):
-			
-			if start_crawling(elem):
-				message = "Started crawling at paragraph {}".format(i)
-				print_and_log(message)
-				crawl = True
 
 			if stop_crawling(elem):
 				message = "Stopped crawling at paragraph {}.".format(i)
 				print_and_log(message)
-				crawl = False
+				return 
 
-			if crawl:
-				if verbose: 
-					print("Parsing paragraph {}".format(i), flush=True)
+			if verbose: 
+				print("Parsing paragraph {}".format(i), flush=True)
 				
-				if to_include(elem):
-					f.write(elem.text)
-					f.write("\n")
+			if to_include(elem):
+				f.write(elem.text)
+				f.write("\n")
 
 
 def crawl_en_journal_watch(driver, output, timeout=100, verbose=False):
 
 	print_and_log("Crawling English Journal Watch.")
-	# WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "NEJM JOURNAL WATCH")))
 	WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Comment') or contains(text(), 'Disclosures for')]")))
-	
-	xpath_query = "//*[self::h3 or self::p]"
-	paragraphs = driver.find_elements_by_xpath(xpath_query)
-	
+		
 	with open(output, "w") as f:
+
+		sleep(4)
+		
+		xpath_query = "//*[self::h3 or self::p]"
+		paragraphs = driver.find_elements_by_xpath(xpath_query)
 
 		for i, p in enumerate(paragraphs):
 
@@ -499,17 +499,15 @@ crawl_all_urls(container)
 
 
 # Testing
-zh_url = "https://www.nejmqianyan.cn/article/YXQYcpc1208154"
-en_url = "http://www.nejm.org/doi/full/10.1056/NEJMcpc1208154?query=nejmyxqy"
-zh_out = "test.zh"
+# zh_url = "https://www.nejmqianyan.cn/article/YXQYcpc1208154"
+en_url = "https://www.jwatch.org/na43336/2017/01/24/yet-long-way-go-fib-guidelines?query=nejmyxqy"
+# zh_out = "test.zh"
 en_out = "test.en"
 
 
-driver.get(zh_url)
-crawl_zh_page(driver, zh_out)
-
+# driver.get(zh_url)
+# crawl_zh_page(driver, zh_out)
 driver.get(en_url)
-crawl_en_nejm(driver, en_out, verbose=True)
-
+crawl_en_journal_watch(driver, en_out, verbose=True)
 
 
