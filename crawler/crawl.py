@@ -230,11 +230,16 @@ def crawl_en_nejm(driver, output, verbose=False):
 				f.write("\n")
 
 
-def crawl_en_journal_watch(driver, output, timeout=100, verbose=False):
+def crawl_en_journal_watch(driver, output, timeout=60, verbose=False):
 
 	print_and_log("Crawling English Journal Watch.")
-	WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Comment') or contains(text(), 'Disclosures for')]")))
-		
+
+	try: 
+		WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, "//*[contains(text(), 'Comment') or contains(text(), 'Disclosures for')]")))
+	except:
+		print("Timeout.")
+		return
+
 	with open(output, "w") as f:
 
 		sleep(4)
