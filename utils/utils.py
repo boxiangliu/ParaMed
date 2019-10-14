@@ -1,7 +1,9 @@
+import re
 import os
 import glob
 from collections import defaultdict
 import pandas as pd
+from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktTrainer
 
 def get_years(driver):
 	elements = driver.find_elements_by_class_name("field_video_a")
@@ -154,3 +156,73 @@ class Container(dict):
 		df = pd.DataFrame(proto_df)
 		df.sort_values(by=["year", "month"], inplace=True)
 		return df
+
+
+	def get_all_article_paths(self, root_dir, ext):
+		article_paths = []
+		for year, months in self.items():
+			for month, articles in months.items():
+				for article, (_,_) in articles.items():
+					article_paths.append("{}/{}/{}/{}.{}".format(
+						root_dir, year, month, article, ext))
+
+		print("{} Articles.".format(len(article_paths)), flush=True)
+		return article_paths
+
+
+def get_article_as_lowercase_string(path):
+	
+	with open(path, "r") as f:
+		article = f.read().lower()
+
+	return article
+
+
+def get_nltk_sent_tokenizer(container, lan):
+
+	assert lan in ["zh", "en"], "Unknown language."
+
+	trainer = PunktTrainer()
+	article_paths = container.get_all_article_paths(
+		root_dir="../processed_data/crawler/nejm/articles/",
+		ext=lan)
+
+	missing_count = 0
+	for path in article_paths:
+		try:
+			article = get_article_as_lowercase_string(path)
+			trainer.train(text=article, finalize=False)
+		except FileNotFoundError:
+			print("{} not found.".format(path))
+			missing_count += 1
+	print("{} articles not found.".format(missing_count))
+
+	trainer.finalize_training()
+	tokenizer = PunktSentenceTokenizer(trainer.get_params())
+	return tokenizer
+
+
+class RegexSentenceTokenizer():
+	def __init__(self, regex):
+		self.regex = regex
+
+	def tokenize(self, text):
+		sents = re.split(pattern=self.regex, string=text)
+		punctuations = re.findall(pattern=self.regex, string=text)
+		
+		sent_len = len(sents)
+		punct_len = len(punctuations)
+
+		assert (sent_len <= (punct_len + 1)) and (punct_len <= sent_len), \
+			print("Found {} sentences and {} punctuations.".\
+				format(sent_len, punct_len))
+
+		for i, p in enumerate(punctuations):
+			sents[i] += p
+
+		sents = [x.strip() for x in sents]
+		
+		if sents[-1] == "":
+			sents.pop()
+
+		return sents

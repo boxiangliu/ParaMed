@@ -291,7 +291,7 @@ def crawl_all_urls(container):
 					message = "### Progress: {}/{} Articles ###".format(n, total)
 					print_and_log(message)
 
-				article = article.replace("/","-")
+				article = article.replace("/","-").replace(" ", "").replace("•", "")
 				message = "Article: {}".format(article)
 				print_and_log(message)
 
