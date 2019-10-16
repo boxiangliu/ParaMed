@@ -1,6 +1,0 @@
-for name in /Users/boxiang/Documents/work/Baidu/projects/med_translation/processed_data/crawler/nejm/articles/*/*/*; do
-	echo "Old name: $name"
-	newname=$(echo $name | sed -e "s/ //g" -e "s/•//g")
-	echo "New name: $newname"
-	mv "$name" "$newname"
-done

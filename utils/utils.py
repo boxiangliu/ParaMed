@@ -178,14 +178,21 @@ def get_article_as_lowercase_string(path):
 	return article
 
 
-def get_nltk_sent_tokenizer(container, lan):
+def get_nltk_sent_tokenizer(container, lang):
 
-	assert lan in ["zh", "en"], "Unknown language."
+	assert lang in ["zh", "en"], "Unknown language."
 
 	trainer = PunktTrainer()
-	article_paths = container.get_all_article_paths(
-		root_dir="../processed_data/crawler/nejm/articles/",
-		ext=lan)
+	if isinstance(container, Container):
+		article_paths = container.get_all_article_paths(
+			root_dir="../processed_data/crawler/nejm/articles/",
+			ext=lang)
+	elif isinstance(container, list):
+		print("{} Articles.".format(len(container)))
+		article_paths = container
+	else:
+		raise ValueError("Cannot parse container with class {}".\
+			format(container.__class__))
 
 	missing_count = 0
 	for path in article_paths:
