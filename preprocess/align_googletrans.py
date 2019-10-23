@@ -11,8 +11,9 @@ from collections import Counter
 from utils.utils import	get_nltk_sent_tokenizer, \
 	RegexSentenceTokenizer, Article
 
-article_dir = "/Users/boxiang/Documents/work/Baidu/projects/"\
-	"med_translation/processed_data/crawler/nejm/articles_norm/"
+article_dir = "../processed_data/crawler/nejm/articles_norm/"
+article_paths = glob.glob("{}/*.en".format(article_dir))
+article_paths = [x for x in article_paths if "撤稿" not in x]
 
 nltk_sent_tokenizer = get_nltk_sent_tokenizer(article_paths, lang="en")
 regex_sent_tokenizer = RegexSentenceTokenizer(regex="[^0-9]\.[0-9]{1,2}[0-9,-]*? ")
@@ -23,8 +24,8 @@ def translate(text, translator, src="zh-cn", dest="en"):
 		translator.translate(text, src=src, dest=dest)]
 
 
-en_path="/Users/boxiang/Documents/work/Baidu/projects/med_translation/processed_data/crawler/nejm/articles_norm/接受多药物治疗的心房颤动患者中华法林和阿哌沙班的用药对比.en"
-zh_path="/Users/boxiang/Documents/work/Baidu/projects/med_translation/processed_data/crawler/nejm/articles_norm/接受多药物治疗的心房颤动患者中华法林和阿哌沙班的用药对比.zh"
+en_path="../processed_data/crawler/nejm/articles_norm/接受多药物治疗的心房颤动患者中华法林和阿哌沙班的用药对比.en"
+zh_path="../processed_data/crawler/nejm/articles_norm/接受多药物治疗的心房颤动患者中华法林和阿哌沙班的用药对比.zh"
 
 en = Article(en_path, lang="en", sent_tokenizers=[nltk_sent_tokenizer, regex_sent_tokenizer])
 
