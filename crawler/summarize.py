@@ -57,7 +57,7 @@ class Article():
 # English:
 article_paths=glob.glob("{}/*.en".format(article_dir))
 nltk_sent_tokenizer = get_nltk_sent_tokenizer(article_paths, lang="en")
-regex_sent_tokenizer = RegexSentenceTokenizer(regex="[^0-9]\.[0-9]{1,3}[0-9,-]*?[ \n]")
+regex_sent_tokenizer = RegexSentenceTokenizer(regex="[^0-9]\.[0-9]{1,2}[0-9,-]*?[ \n]")
 
 num_sents = 0
 for path in article_paths:

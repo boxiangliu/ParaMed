@@ -1,0 +1,34 @@
+/Users/boxiang/Documents/work/Baidu/projects/med_translation/processed_data/crawler/nejm/articles_norm/不停跳或停跳冠状动脉旁路移植术后的5年结局研究.zh
+
+one English paragraph split into two Chinese paragraphs: 
+
+
+'we found an apparent differential effect of the two approaches to surgery according to whether patients had diabetes. although diabetes status was a prespecified subgroup variable at the inception of the trial, we did not specify a reason to expect a difference between the treatment groups. our intention was to examine the consistency of effects of the two types of cabg and was motivated by the results of trials of cabg (mostly on-pump) versus pci in which cabg was found to be superior to pci, particularly among patients with diabetes.27,28 our results suggesting that there may be an interaction between cabg type and diabetes status should be viewed in light of the fact that we did examine several other prespecified subgroups and that so far none of the other trials have reported a significant interaction with this variable. our results should stimulate a systematic analysis of data from all other trials on the relative long-term effect of the two techniques according to diabetes status. therefore, until further confirmation is available from other trials, caution should be exercised in interpreting this subgroup result.'
+
+'我们发现这两种手术对于患者有无糖尿病存在明显的差异效应。尽管在试验起初，糖尿病状态是一个预设的亚组变量，但我们并未明确提出一个预期治疗组间差异的理由。我们的目的是检查两种类型cabg效应的一致性。本试验的动机来源于cabg（多数是停跳的）和pci的对比试验结果：在这些结果中人们发现cabg优于pci27,28，尤其是在糖尿病患者中。我们的结果显示在cabg类型和糖尿病状态之间也许存在某种交互作用。鉴于我们确实检查了一些其他预设亚组，而且迄今没有其他试验报告过这个变量存在显著交互作用这些事实，我们的结果应当得到重视。'
+
+'我们的结果应该激发系统的数据分析，这些数据需要来自根据糖尿病状态关于两种技术相对远期效应的所有其他试验。所以，在从其他试验中得到进一步确定前，我们应该谨慎解释这个亚组结果。'
+
+
+
+/Users/boxiang/Documents/work/Baidu/projects/med_translation/processed_data/crawler/nejm/articles_norm/比伐卢定和肝素单药治疗心肌梗死的比较研究.en
+
+One English paragraph split into two english paragraphs.
+
+'在接受pci的心肌梗死患者中，任何原因死亡、心肌梗死或大出血这一复合终点的发生率在比伐卢定组不低于肝素单药治疗组（由瑞典心肺基金会[swedish heart-lung foundation]等资助；在validate-swedeheart clinical-trialsregister.eu注册号为2012-005260-10；在clinicaltrials.gov注册号为nct02311231）。'
+
+'among patients undergoing pci for myocardial infarction, the rate of the composite of death from any cause, myocardial infarction, or major bleeding was not lower among those who received bivalirudin than among those who received heparin monotherapy. (funded by the swedish heart-lung foundation and others; validate-swedeheart clinicaltrialsregister.eu number, 2012-005260-10'
+
+'; clinicaltrials.gov number, nct02311231'
+
+
+Two English paragraphs merged into one Chinese paragraphs.
+'对stemi患者，我们在血管造影后、随机化之前得到了有目击证人的患者口头同意。在接下来的24小时内，我们提供给患者关于本试验的书面信息，患者提供书面知情同意，确认继续参与试验。对nstemi患者，我们在血管造影前获得了患者的书面同意。  在血管造影后和pci前，我们通过在线瑞典冠脉造影和血管成形术登记系统（swedish coronary angiography and angioplasty registry，scaar；swedeheart登记系统的一个构成部分）以开放标签的形式将患者随机分配接受经静脉比伐卢定（medicines company）或经动脉普通肝素（leo pharma）治疗。我们采用电脑生成列表，根据心肌梗死类型（stemi或nstemi）和医院进行分层，采用排列区组按照1∶1的比例进行随机化。'
+
+'in patients with stemi, witnessed oral consent was obtained after angiography and before randomization. within the following 24 hours, after written information about the trial had been provided, the patients confirmed further participation by providing written informed consent. in patients with nstemi, written consent was obtained before angiography.'
+
+'after angiography but before pci, the patients were randomly assigned, through the online swedish coronary angiography and angioplasty registry (scaar; which is a component of the swedeheart registry), to receive in an open-label fashion either intravenous bivalirudin (the medicines company) or intraarterial unfractionated heparin (leo pharma). randomization was performed in a 1:1 ratio in permuted blocks, with the use of a computer-generated list, with stratification according to type of myocardial infarction (stemi or nstemi) and hospital
+
+
+
+Chinese journal watch has citation

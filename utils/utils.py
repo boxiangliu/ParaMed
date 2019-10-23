@@ -2,6 +2,7 @@ import re
 import os
 import glob
 from collections import defaultdict
+from dateutil import parser
 import pandas as pd
 from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktTrainer
 
@@ -169,6 +170,19 @@ class Container(dict):
 		print("{} Articles.".format(len(article_paths)), flush=True)
 		return article_paths
 
+def read_and_preprocess_article(path, lang):
+	article = get_article_as_lowercase_string(path)
+	
+	if lang == "en":	
+		article = article.replace("\n. opens in new tab\n", "")
+	
+	elif lang == "zh":
+		pass
+	
+	else: 
+		raise ValueError("Unknown language: {}".format(lang))
+
+	return article
 
 def get_article_as_lowercase_string(path):
 	
@@ -233,3 +247,258 @@ class RegexSentenceTokenizer():
 			sents.pop()
 
 		return sents
+
+
+def get_sentences(sent_tokenizers, texts):
+	if sent_tokenizers[0] is None:
+		return []
+
+	if not isinstance(texts, list):
+		texts = [texts]
+
+	for tokenizer in sent_tokenizers:
+		sentences = []
+		for t in texts:
+			s = tokenizer.tokenize(t)
+			sentences += s
+		texts = sentences
+	
+	return sentences
+
+
+class AnnoStr(str):
+	def __new__(cls, text, sent_tokenizers):
+		return super().__new__(cls, text)
+
+	def __init__(self, text, sent_tokenizers):
+		self.detect_numbers()
+		self.detect_headers()
+		self.count_sentences(sent_tokenizers)
+
+	def detect_headers(self):
+		text = self.strip()
+		group = 0 # default type
+		exact = {"abstract": 1,
+			   "摘要": 1,
+			   "background": 2,
+			   "背景": 2,
+			   "methods": 3, 
+			   "方法": 3,
+			   "results": 4,
+			   "结果": 4,
+			   "conclusions": 5,
+			   "结论": 5, 
+			   "study population": 6,
+			   "研究人群": 6,
+			   "trial regimen": 7,
+			   "trial regimens": 7,
+			   "试验治疗方案": 7,
+			   "trial outcomes": 8,
+			   "试验结局": 8,
+			   "trial populations": 9,
+			   "trial population": 9,
+			   "试验人群": 9,
+			   "discussion": 10, 
+			   "讨论": 10,
+			   "trial design and oversight": 11,
+			   "试验设计和监管": 11,
+			   "patient population": 12,
+			   "患者人群": 12,
+			   "statistical analysis": 13,
+			   "统计学分析": 13,
+			   "patients": 14,
+			   "患者": 14,
+			   "trial design": 15, 
+			   "试验设计": 15,
+			   "疗效": 16,
+			   "效果": 16, 
+			   "有效性": 16,
+			   "efficacy": 16
+			   }
+
+		if text in exact:
+			group = exact[text]
+		elif text.endswith("终点") or \
+			 text.endswith("end points") or \
+			 text.endswith("end point"):
+			 group = 17
+		elif text.endswith("评估") or \
+			 text.endswith("assessment") or \
+			 text.endswith("assessments"):
+			 group = 18
+		elif text.endswith("安全性") or \
+			 text.endswith("safety"):
+			 group = 19
+		else:
+			pass
+		self.group = group
+
+
+	def detect_numbers(self):
+		numbers = re.findall("\d", self)
+		self.number = Counter(numbers)
+
+	def count_sentences(self, sent_tokenizers):
+		sentences = get_sentences(sent_tokenizers, self)
+		self.num_sents = len(sentences)
+		self.sents = sentences
+
+
+class Article():
+	def __init__(self, path, lang, sent_tokenizers=None):
+		self.path = path
+		self.lang = lang
+		self.sent_tokenizers = sent_tokenizers \
+			if isinstance(sent_tokenizers, list) \
+			else [sent_tokenizers] 
+
+		self.article = read_and_preprocess_article(path, lang)
+		self.paragraphs = [AnnoStr(x, self.sent_tokenizers) \
+			for x in self.article.split("\n")]
+		self.filter_paragraphs()
+		self.sentences = get_sentences(
+			self.sent_tokenizers, self.paragraphs)
+
+	def is_boilerplate(self, text):
+
+		lang = self.lang
+		text = text.strip()
+
+		def is_date(text):
+			try:
+				parser.parse(text)
+				return True
+			except ValueError:
+				return False
+
+		def is_reviewer_intro(text):
+			text = text.strip()
+			last_three_words = " ".join(text.split(" ")[-3:])
+			last_two_words = " ".join(last_three_words.split(" ")[-2:])
+			if is_date(last_three_words) or \
+				is_date(last_two_words):
+				if "reviewing" in text:
+					return True
+				if text.startswith("comments"):
+					return True
+			return False
+
+		english_boilerplates = ["access provided by",
+			"access provided by lane medical library, "\
+			"stanford university med center",
+			"lane medical library, stanford university med center",
+			"subscribe", 
+			"or renew",
+			"institution: stanford university",
+			"original article",
+			"metrics",
+			"editorial",
+			"clinical problem-solving",
+			"perspective",
+			"audio interview",
+			"download",
+			"video",
+			"focus on research",
+			"history of clinical trials"
+			]
+
+		chinese_boilerplates = ["图1.", "图2.", "图3.", "图4.",
+			"图5.", "表1.", "表2.", "表3.", "表4.", "表5.",
+			"nothing to disclose"]
+
+		if lang == "en":
+
+			if is_date(text):
+				return True
+			elif is_reviewer_intro(text):
+				return True
+			elif text in english_boilerplates:
+				return True
+			elif re.search("\([0-9]{2}:[0-9]{2}\)", text):
+				return True
+			elif text.startswith("copyright ©"):
+				return True
+			elif text.startswith("nejm journal watch"):
+				return True
+			elif text.startswith("supported by"):
+				return True
+			elif text.startswith("the discovehr study was partially funded"):
+				return True
+			else:
+				return False
+
+		elif lang == "zh":
+
+			if text in chinese_boilerplates:
+				return True
+			elif text.startswith("评论"):
+				return True
+			elif text.startswith("引文"):
+				return True
+			elif text.startswith("出版时的编辑声明"):
+				return True
+			elif text.startswith("supported by"):
+				return True
+			elif text.startswith("the discovehr study was partially funded"):
+				return True
+			else:
+				return False
+
+		else:
+			raise ValueError("Unknown language: {}".format(lang))
+
+
+	def filter_paragraphs(self):
+
+		kept_paragraphs = []
+		filtered_paragraphs = []
+		for para in self.paragraphs:
+
+			if para.strip() == "":
+				continue
+
+			if self.is_boilerplate(para):
+				filtered_paragraphs.append(para)
+			else:
+				kept_paragraphs.append(para)
+
+
+		self.kept_paragraphs = kept_paragraphs
+		self.filtered_paragraphs = filtered_paragraphs
+
+
+	def get_paragraph_lengths(self):
+		if self.lang == "en":
+			lengths = [len(para.split(" ")) \
+				for para in self.paragraphs \
+				if len(para) != 0]
+
+		elif self.lang == "zh":
+			lengths = []
+			for para in self.paragraphs:
+				para = re.sub("[a-z]", "", para)
+				length = len(para)
+				if length != 0: 
+					lengths.append(len(para))
+
+		else:
+			raise ValueError("Language not supported: {}".\
+				format(self.lang))
+
+		return lengths
+
+
+	def write_to_disk(self, out_fn, level):
+		if level == "sentence":
+			with open(out_fn, "w") as f:
+				for sent in self.sentences:
+					f.write(sent + "\n")
+		elif level == "article":
+			with open(out_fn, "w") as f:
+				f.write(self.article)
+		elif level == "paragraph":
+			with open(out_fn, "w") as f:
+				for para in self.paragrahs:
+					f.write(para + "\n")
+		else:
+			raise ValueError("Unknown level: {}".format(level))

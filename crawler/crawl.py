@@ -367,3 +367,11 @@ def main():
 
 if __name__ == "__main__":
 	main()
+
+# debug 
+driver = webdriver.Chrome()
+driver.get("https://www.jwatch.org/na45145/2017/10/17/sepsis-protocol-driven-care-worsens-prognosis-hiv-positive?query=nejmyxqy")
+login(driver)
+elements = driver.find_elements_by_xpath("//p")
+for e in elements:
+	print(e.text)
