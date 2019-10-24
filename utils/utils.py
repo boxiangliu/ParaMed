@@ -356,8 +356,9 @@ class Article():
 		self.paragraphs = [AnnoStr(x, self.sent_tokenizers) \
 			for x in self.article.split("\n")]
 		self.filter_paragraphs()
+
 		self.sentences = get_sentences(
-			self.sent_tokenizers, self.paragraphs)
+			self.sent_tokenizers, self.kept_paragraphs)
 
 	def is_boilerplate(self, text):
 
