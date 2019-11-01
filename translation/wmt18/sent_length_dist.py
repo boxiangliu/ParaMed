@@ -11,8 +11,8 @@ parser = argparse.ArgumentParser(
 parser.add_argument("--files", type=str, 
 	help="Comma separated list of name:file entries."\
 		 "For example, UN_zh:UNcorpus.zh, UN_en:UNcorpus.en",
-	default="nejm_en:/mnt/home/boxiang/projects/med_translation/processed_data/crawler/nejm/sentences_concat/nejm.tok.en,"\
-			"nejm_zh:/mnt/home/boxiang/projects/med_translation/processed_data/crawler/nejm/sentences_concat/nejm.tok.zh,"\
+	default="nejm_en:/mnt/home/boxiang/projects/med_translation/processed_data/preprocess/sentences_concat/nejm.tok.en,"\
+			"nejm_zh:/mnt/home/boxiang/projects/med_translation/processed_data/preprocess/sentences_concat/nejm.tok.zh,"\
 			"wmt18_en:/mnt/data/boxiang/wmt18/corpus/corpus.en,"\
 			"wmt18_zh:/mnt/data/boxiang/wmt18/corpus/corpus.zh")
 parser.add_argument("--out_dir", type=str,

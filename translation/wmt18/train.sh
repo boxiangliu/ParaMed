@@ -45,9 +45,3 @@ $onmt/bin/train.py \
 -gpu_ranks 0 1 2 3 4 5 6 7 \
 &> $model/zh-en_2.log
 
-$onmt/bin/translate.py \
--model $model/zh-en_2_step_110000.pt \
--src $data/dev/newsdev2017.tc.zh \
--output pred.txt \
--replace_unk -verbose \
--gpu 0 1 2 3 4 5 6 7

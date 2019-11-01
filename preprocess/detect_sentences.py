@@ -7,8 +7,8 @@ import pandas as pd
 from utils.utils import Article, get_nltk_sent_tokenizer,\
 	RegexSentenceTokenizer
 
-article_dir = "../processed_data/crawler/nejm/articles_norm/"
-sentence_dir = "../processed_data/crawler/nejm/sentences/"
+article_dir = "../processed_data/preprocess/articles_norm/"
+sentence_dir = "../processed_data/preprocess/sentences/"
 if not os.path.exists(sentence_dir):
 	os.makedirs(sentence_dir)
 

@@ -1,4 +1,4 @@
-data=../processed_data/crawler/nejm/sentences/
+data=../processed_data/preprocess/sentences/
 moses_scripts=~/software/mosesdecoder/scripts/
 
 src=zh
