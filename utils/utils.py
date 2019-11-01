@@ -223,6 +223,11 @@ def get_nltk_sent_tokenizer(container, lang):
 	return tokenizer
 
 
+def translate(text, translator, src="zh-cn", dest="en"):
+	return [x.text.lower() for x in \
+		translator.translate(text, src=src, dest=dest)]
+
+
 class RegexSentenceTokenizer():
 	def __init__(self, regex):
 		self.regex = regex
@@ -503,3 +508,4 @@ class Article():
 					f.write(para + "\n")
 		else:
 			raise ValueError("Unknown level: {}".format(level))
+
