@@ -6,7 +6,7 @@ export out_dir=../processed_data/alignment/bleualign/translate/
 
 translate(){
 	src=$1
-	gpu=$(($2 % 10))
+	gpu=$(($2 % 8))
 
 	echo "Source file:" $src
 	echo "GPU:" $gpu
@@ -15,7 +15,7 @@ translate(){
 	-model $model/zh-en_2_step_120000.pt \
 	-src $src \
 	-output $out_dir/`basename $src`.to_en \
-	-replace_unk \
+	-replace_unk -verbose \
 	-gpu $gpu	
 }
 
