@@ -18,7 +18,7 @@ parser.add_argument("--files", type=str,
 parser.add_argument("--out_dir", type=str,
 	help="Output directory.",
 	default="/mnt/home/boxiang/projects/med_translation/"\
-			"processed_data/translation/wmt18")
+			"processed_data/translation/wmt18/sent_length_dist/")
 args=parser.parse_args()
 
 files = dict([x.split(":") for x in \

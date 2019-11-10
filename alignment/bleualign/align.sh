@@ -1,6 +1,20 @@
 bleualign=~/projects/Bleualign/bleualign.py
-$bleualign \
--s ../processed_data/preprocess/sentences/鼻咽癌的吉西他滨联合顺铂诱导化疗.zh.tok \
--t ../processed_data/preprocess/sentences/鼻咽癌的吉西他滨联合顺铂诱导化疗.en.tok \
---srctotarget ../processed_data/alignment/bleualign/translate/鼻咽癌的吉西他滨联合顺铂诱导化疗.zh.to_en \
--o ../processed_data/alignment/bleualign/align/鼻咽癌的吉西他滨联合顺铂诱导化疗.align
+trans_dir=../processed_data/alignment/bleualign/translate/
+src_dir=../processed_data/preprocess/sentences/
+align_dir=../processed_data/alignment/bleualign/align/
+
+for src in `ls $src_dir/*.zh.tok`; do
+
+	tgt=${src/.zh.tok/.en.tok}
+	base=`basename $src`
+	trans=$trans_dir/${base}.to_en
+	align=$align_dir/${base/.zh.tok/.align}
+	echo $base
+
+	$bleualign \
+	-s $src \
+	-t $tgt \
+	--srctotarget $trans \
+	-o $align
+
+done

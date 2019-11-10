@@ -5,15 +5,15 @@ model=~/projects/med_translation/processed_data/translation/wmt18/
 $onmt/bin/preprocess.py \
 -src_seq_length 256 \
 -tgt_seq_length 256 \
--train_src $data/corpus/corpus.zh \
--train_tgt $data/corpus/corpus.en \
+-train_src $data/train/corpus.zh \
+-train_tgt $data/train/corpus.en \
 -valid_src $data/dev/newsdev2017.tc.zh \
 -valid_tgt $data/dev/newsdev2017.tc.en \
--save_data $data/corpus/corpus
+-save_data $data/train/corpus
 
 
 $onmt/bin/train.py \
--data $data/corpus/corpus \
+-data $data/train/corpus \
 -save_model $model/zh-en_2 \
 -layers 6 \
 -rnn_size 512 \

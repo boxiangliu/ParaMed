@@ -359,7 +359,7 @@ class Article():
 
 		self.article = read_and_preprocess_article(path, lang)
 		self.paragraphs = [AnnoStr(x, self.sent_tokenizers) \
-			for x in self.article.split("\n")]
+			for x in self.article.split("\n") if x != ""]
 		self.filter_paragraphs()
 
 		self.sentences = get_sentences(
