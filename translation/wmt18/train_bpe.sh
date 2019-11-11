@@ -3,7 +3,7 @@
 # Created : Nov 05, 2019
 
 ONMT=/mnt/home/boxiang/projects/OpenNMT-py
-OUT="../processed_data/wmt18/train_bpe/"
+OUT="../processed_data/translation/wmt18/train_bpe/"
 DATA=/mnt/data/boxiang/wmt18/
 TRAIN_SRC=$DATA/train/corpus.zh
 TRAIN_TGT=$DATA/train/corpus.en
