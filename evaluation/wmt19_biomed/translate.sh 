@@ -34,8 +34,21 @@ $moses_scripts/tokenizer/normalize-punctuation.perl -l en | \
 $moses_scripts/tokenizer/tokenizer.perl -a -l en \
 >> $data/medline_zh2en_en.textonly.tok.txt
 
-$bleualign \
--s $data/medline_zh2en_zh.textonly.tok.txt \
--t $data/medline_zh2en_en.textonly.tok.txt \
+# Add document-sentence markers: 
+paste -d "|" \
+$data/medline_zh2en_zh.textonly.tok.txt \
+<(awk 'BEGIN{FS="\t";OFS=","}{print $1,$2}' $data/medline_zh2en_zh.txt) \
+> $data/medline_zh2en_zh.textonly.tok.mark.txt
+
+paste -d "|" \
+$data/medline_zh2en_en.textonly.tok.txt \
+<(awk 'BEGIN{FS="\t";OFS=","}{print $1,$2}' $data/medline_zh2en_en.txt) \
+> $data/medline_zh2en_en.textonly.tok.mark.txt
+
+
+$bleualign --factored \
+-s $data/medline_zh2en_zh.textonly.tok.mark.txt \
+-t $data/medline_zh2en_en.textonly.tok.mark.txt \
 --srctotarget $data/medline_zh2en_zh.textonly.tok.to_en.txt \
--o $data/align.tok
+-o $data/align.tok.mark
+
