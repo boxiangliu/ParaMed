@@ -1,4 +1,5 @@
-from argparse import Namespace
+import argparse 
+import os
 import pandas as pd
 pd.options.display.max_columns = 99
 pd.options.display.max_rows = 1000
@@ -8,10 +9,24 @@ import ipdb
 from sklearn.metrics import precision_score,\
 	recall_score
 
-args = Namespace(align_fn="../data/wmt19_biomed_modified/align_validation_zh_en.txt",
-			  en_fn="../data/wmt19_biomed_modified/medline_zh2en_en.txt",
-			  zh_fn="../data/wmt19_biomed_modified/medline_zh2en_zh.txt",
-			  bleualign_fn="../data/wmt19_biomed_modified/align_bleualign_zh_en.txt")
+parser = argparse.ArgumentParser(description="Generate precision-recall "\
+	"table for sentence alignments.")
+parser.add_argument("--align_fn", type=str, help="Path to ground-truth "\
+	"alignment file.")
+parser.add_argument("--en_fn", type=str, help="Path to English sentences.")
+parser.add_argument("--zh_fn", type=str, help="Path to Chinese sentences.")
+parser.add_argument("--pred_fn", type=str, help="Path to prediction sentence.")
+parser.add_argument("--out_fn", type=str, help="Path to output precision "\
+	"recall table.")
+args = parser.parse_args()
+os.makedirs(os.path.dirname(args.out_fn), exist_ok=True)
+
+# Example
+# args = Namespace(align_fn="../data/wmt19_biomed_modified/align_validation_zh_en.txt",
+# 			  en_fn="../data/wmt19_biomed_modified/medline_zh2en_en.txt",
+# 			  zh_fn="../data/wmt19_biomed_modified/medline_zh2en_zh.txt",
+# 			  pred_fn="../data/wmt19_biomed_modified/align_bleualign_zh_en.txt",
+# 			  out_fn="../processed_data/evaluation/wmt19_biomed/evaluate/bleualign.pr")
 
 
 def align_en_zh(align, en, zh):
@@ -70,8 +85,8 @@ def copy_validation_align(row):
 	else:
 		return np.NaN
 
-def copy_bleualign_align(row):
-	if row["status_ble"] is not np.NaN \
+def copy_pred_align(row):
+	if row["status_pred"] is not np.NaN \
 		or "omitted" in row["align"]:
 		return row["align"]
 	else:
@@ -98,32 +113,33 @@ def align_type(x):
 			out.append("{} - {}".format(min_len, max_len))
 	return out
 
+def main():
+	align, en, zh = read_data(args)
+	pred = pd.read_table(args.pred_fn, names=["doc", "align","status", "zh", "en"])
+	merged = pd.merge(align[["doc", "align", "status"]], 
+		pred[["doc", "align", "status"]], 
+		on=["doc", "align"], how="outer", suffixes=("_val", "_pred")).\
+		sort_values(["doc", "align"])
 
-align, en, zh = read_data(args)
-bleualign = pd.read_table(args.bleualign_fn, names=["doc", "align","status", "zh", "en"])
-merged = pd.merge(alignment[["doc", "align", "status"]], 
-	bleualign[["doc", "align", "status"]], 
-	on=["doc", "align"], how="outer", suffixes=("_val", "_ble")).\
-	sort_values(["doc", "align"])
+	merged["align_val"] = merged.apply(lambda x: copy_validation_align(x), axis=1)
+	merged["align_pred"] = merged.apply(lambda x: copy_pred_align(x), axis=1)
+	merged["type_val"] = align_type(merged["align_val"])
+	merged["type_pred"] = align_type(merged["align_pred"])
 
-merged["align_val"] = merged.apply(lambda x: copy_validation_align(x), axis=1)
-merged["align_ble"] = merged.apply(lambda x: copy_bleualign_align(x), axis=1)
-merged["type_val"] = align_type(merged["align_val"])
-merged["type_ble"] = align_type(merged["align_ble"])
+	pr_table = defaultdict(list)
+	for atype in merged["type_val"].unique():
+		if atype is np.NaN:
+			continue
 
-pr_table = defaultdict(list)
-for atype in merged["type_val"].unique():
-	if atype is np.NaN:
-		continue
+		truths = merged.assign(val=lambda x: x["type_val"].eq(atype),
+				  ble=lambda x: x["type_pred"].eq(atype))
+		precision = precision_score(truths["val"], truths["ble"])
+		recall = recall_score(truths["val"], truths["ble"])
+		pr_table["type"].append(atype)
+		pr_table["precision"].append(precision)
+		pr_table["recall"].append(recall)
+	pr_table = pd.DataFrame(pr_table)
+	pr_table.to_csv(args.out_fn, sep="\t", index=False)
 
-	truths = merged.assign(val=lambda x: x["type_val"].eq(atype),
-			  ble=lambda x: x["type_ble"].eq(atype))
-	precision = precision_score(truths["val"], truths["ble"])
-	recall = recall_score(truths["val"], truths["ble"])
-	pr_table["type"].append(atype)
-	pr_table["precision"].append(precision)
-	pr_table["recall"].append(recall)
-pr_table = pd.DataFrame(pr_table)
-
-# 
-
+if __name__ == "__main__":
+	main()

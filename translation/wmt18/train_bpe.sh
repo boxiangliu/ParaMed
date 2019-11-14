@@ -119,6 +119,37 @@ python $ONMT/train.py \
 -gpu_ranks 0 1 2 3 4 5 6 7\
 &> $OUT/models/en2zh.log
 
+python restartsub.py M40x8 8 en2zh "python $ONMT/train.py \
+-data $OUT/data/en2zh/processed \
+-save_model $OUT/models/en2zh \
+-layers 6 \
+-rnn_size 512 \
+-word_vec_size 512 \
+-transformer_ff 2048 \
+-heads 8  \
+-encoder_type transformer \
+-decoder_type transformer \
+-position_encoding \
+-train_steps 200000 \
+-max_generator_batches 2 \
+-dropout 0.1 \
+-batch_size 4096 \
+-batch_type tokens \
+-normalization tokens \
+-accum_count 2 \
+-optim adam \
+-adam_beta2 0.998 \
+-decay_method noam \
+-warmup_steps 8000 \
+-learning_rate 2 \
+-max_grad_norm 0 \
+-param_init 0 \
+-param_init_glorot \
+-label_smoothing 0.1 \
+-valid_steps 10000 \
+-save_checkpoint_steps 5000 \
+-world_size 8 \
+-gpu_ranks 0 1 2 3 4 5 6 7"
 
 echo "Step 3: Translate Dev"
 model=$OUT/models/zh2en_step_140000.pt

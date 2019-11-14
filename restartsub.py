@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
 import os
 import re
 import sys
@@ -7,7 +8,6 @@ import time
 import glob
 import subprocess
 import logging
-
 
 starttime = time.time()
 
@@ -57,26 +57,18 @@ num_CPU = numcpuspergpu * num_GPU
 
 
 # Parse arguments:
-pattern = "--([A-Za-z\_]*)\ ([A-Za-z\_\ 0-9\/\.]*)"
+pattern = "-([A-Za-z\_]*)\ ([A-Za-z\_\ 0-9\/\.]*)"
 
 parameters = dict(re.findall(pattern, cmd))
-parameters = dict([(k.strip(), v.strip()) for k, v in parameters.iteritems()])
+parameters = dict([(k.strip(), v.strip()) for k, v in parameters.items()])
 
-save_dir = parameters["save_dir"]
-print cmd
-
-try:
-    log_dir = parameters["log_dir"]
-except:
-    log_dir = save_dir
-    
-print log_dir
-
-if not os.path.exists(log_dir):
-    os.makedirs(log_dir)
+save_model = parameters["save_model"]
+save_dir = os.path.dirname(save_model)
+print("Command: {}".format(cmd))
+print("Save_dir: {}".format(save_dir))
 
 logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',  # format='%(asctime)s %(levelname)-8s %(message)s',
-                    filename=log_dir + "/sub_log." + job_name + '.txt',
+                    filename=save_dir + "/sub_log." + job_name + '.txt',
                     level=logging.DEBUG,
                     datefmt='%Y-%m-%d %H:%M:%S')
 logging.info(cmd)
@@ -99,23 +91,32 @@ while True:
 
     try:
         latest_checkpoint = max(glob.iglob(
-            save_dir + '/train_*.ckpt'), key=os.path.getctime)
-        trainfrom = " --checkpoint " + latest_checkpoint
+            save_model + '_step_*.pt'), key=os.path.getctime)
+        trainfrom = " -train_from " + latest_checkpoint
         new_cmd = cmd + trainfrom
-
+        print 
         logging.info("restart %s and load previouse model from %s" %
                      (job_name, latest_checkpoint))
 
-        slurm_com = "sbatch --gres=gpu:%s --ntasks=1 --cpus-per-task %s --partition=%s --job-name=%s --wrap \"/mnt/home/boxiang/software/anaconda2/bin/python %s \" --output=%s/slurm_log.txt;" % (
-            str(num_GPU), str(num_CPU), partition_name, job_name, new_cmd, log_dir)
+        slurm_com = "sbatch --gres=gpu:%s --ntasks=1 "\
+         "--cpus-per-task %s --partition=%s --job-name=%s "\
+         "--wrap \"%s \" --output=%s/slurm_log.txt;" % (
+            str(num_GPU), str(num_CPU), partition_name, \
+            job_name, new_cmd, save_dir)
 
+        print("Slurm command: {}".format(slurm_com))
         os.system(slurm_com)
 
     except:
         new_cmd = cmd
         logging.info("restart job: %s from scratch" % (job_name))
-        slurm_com = "sbatch --gres=gpu:%s --ntasks=1 --cpus-per-task %s --partition=%s --job-name=%s --wrap \"/mnt/home/boxiang/software/anaconda2/bin/python %s \" --output=%s/slurm_log.txt;" % (
-            str(num_GPU), str(num_CPU), partition_name, job_name, new_cmd, log_dir)
+        slurm_com = "sbatch --gres=gpu:%s --ntasks=1 "\
+         "--cpus-per-task %s --partition=%s --job-name=%s "\
+         "--wrap \"%s \" --output=%s/slurm_log.txt;" % (
+            str(num_GPU), str(num_CPU), partition_name, \
+            job_name, new_cmd, save_dir)
+
+        print("Slurm command: {}".format(slurm_com))
         os.system(slurm_com)
 
     time.sleep(10)

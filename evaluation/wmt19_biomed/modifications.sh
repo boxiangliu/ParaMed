@@ -62,5 +62,7 @@ rm $owd/align_validation_zh_en.orig.txt
 
 # Extract sentences from medline_zh2en_{zh,en}.txt
 # for evaluation.
-awk 'BEGIN {FS = "\t"}; {print $3}' $owd/medline_zh2en_zh.txt > $owd/medline_zh2en_zh.textonly.txt
-awk 'BEGIN {FS = "\t"}; {print $3}' $owd/medline_zh2en_en.txt > $owd/medline_zh2en_en.textonly.txt
+awk 'BEGIN {FS = "\t"}; {print $3}' $owd/medline_zh2en_zh.txt \
+	> $owd/medline_zh2en_zh.textonly.txt
+awk 'BEGIN {FS = "\t"}; {print $3}' $owd/medline_zh2en_en.txt \
+	> $owd/medline_zh2en_en.textonly.txt

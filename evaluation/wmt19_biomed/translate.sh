@@ -2,7 +2,6 @@ export onmt=~/projects/OpenNMT-py/onmt/
 export data=../data/wmt19_biomed_modified/
 export model=../processed_data/translation/wmt18/train_bpe/models/
 export ONMT=/mnt/home/boxiang/projects/OpenNMT-py
-export bleualign=~/projects/Bleualign/bleualign.py
 export moses_scripts=~/software/mosesdecoder/scripts/
 
 # Chinese sentence segmentation by Jieba:
@@ -19,13 +18,13 @@ $ONMT/tools/apply_bpe.py \
 $onmt/bin/translate.py \
 	-model $model/zh-en_step_140000.pt \
 	-src $data/medline_zh2en_zh.textonly.tok.bpe.txt \
-	-output $data/medline_zh2en_zh.textonly.tok.bpe.to_en.txt \
+	-output $data/medline_zh2en_zh.textonly.tok.bpe.2en.txt \
 	-replace_unk -verbose \
 	-gpu 0
 
 # Remove BPE characters:
-cat $data/medline_zh2en_zh.textonly.tok.bpe.to_en.txt \
-| sed -E 's/(@@ )|(@@ ?$)//g' > $data/medline_zh2en_zh.textonly.tok.to_en.txt
+cat $data/medline_zh2en_zh.textonly.tok.bpe.2en.txt \
+| sed -E 's/(@@ )|(@@ ?$)//g' > $data/medline_zh2en_zh.textonly.tok.2en.txt
 
 # Tokenize English:
 cat $data/medline_zh2en_en.textonly.txt | \
@@ -46,9 +45,22 @@ $data/medline_zh2en_en.textonly.tok.txt \
 > $data/medline_zh2en_en.textonly.tok.mark.txt
 
 
-$bleualign --factored \
--s $data/medline_zh2en_zh.textonly.tok.mark.txt \
--t $data/medline_zh2en_en.textonly.tok.mark.txt \
---srctotarget $data/medline_zh2en_zh.textonly.tok.to_en.txt \
--o $data/align.tok.mark
+paste -d "|" \
+$data/medline_zh2en_zh.textonly.tok.2en.txt \
+<(awk 'BEGIN{FS="\t";OFS=","}{print $1,$2}' $data/medline_zh2en_zh.txt) \
+> $data/medline_zh2en_zh.textonly.tok.2en.mark.txt
 
+
+# Split by document:
+for doc in `awk '{print $1}' $data/medline_zh2en_zh.txt | uniq`; do
+	grep $doc, $data/medline_zh2en_zh.textonly.tok.mark.txt > \
+	$data/separate_docs/${doc}_zh.snt
+
+	grep $doc, $data/medline_zh2en_zh.textonly.tok.2en.mark.txt > \
+	$data/separate_docs/${doc}_zh.2en
+done
+
+for doc in `awk '{print $1}' $data/medline_zh2en_en.txt | uniq`; do
+	grep $doc, $data/medline_zh2en_en.textonly.tok.mark.txt > \
+	$data/separate_docs/${doc}_en.snt
+done

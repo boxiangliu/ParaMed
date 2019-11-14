@@ -1,5 +1,5 @@
 # Crawl NEJM websites:
-python crawler/crawl.py 
+python3 crawler/crawl.py 
 
 
 #################
@@ -31,11 +31,47 @@ bash preprocess/tokenize.sh
 # Do not run (only run on GPU nodes)
 bash translation/wmt18/train_bpe.sh
 
+##############
+# Evaluation #
+##############
+
+## Bleualign ##
+
 # Create a manually aligned gold-standard based on 
 # WMT19 Biomedical translation shared task to  
 # evaluate bleualign with WMT18 baseline model:
 bash evaluation/wmt19_biomed/modifications.sh 
-bash evaluation/wmt19_biomed/translate.sh 
+
+# This will do necessary preprocessing (segmentation, tokenization, BPE)
+# and generate sentence-to-sentence translation. Additionally, it will
+# also mark each sentence with doc#,# markers.
+bash evaluation/wmt19_biomed/translate.sh
+bash evaluation/wmt19_biomed/align.sh
+python3 evaluation/wmt19_biomed/gen_align_file.py \
+	--src_fn ../data/wmt19_biomed_modified/align.tok.mark.ba-s \
+	--tgt_fn ../data/wmt19_biomed_modified/align.tok.mark.ba-t \
+	--out_fn ../data/wmt19_biomed_modified/align_bleualign_zh_en.txt
 
 # Evaluate bleualign with WMT18 baseline model:
-python3 evaluation/wmt19_biomed/evaluate.py
+python3 evaluation/wmt19_biomed/evaluate.py \
+	--align_fn ../data/wmt19_biomed_modified/align_validation_zh_en.txt \
+	--en_fn ../data/wmt19_biomed_modified/medline_zh2en_en.txt \
+	--zh_fn ../data/wmt19_biomed_modified/medline_zh2en_zh.txt \
+	--pred_fn ../data/wmt19_biomed_modified/align_bleualign_zh_en.txt \
+	--out_fn ../processed_data/evaluation/wmt19_biomed/evaluate/bleualign.pr
+
+## Gale-Church ##
+# Align with Gale-Church algorithm:
+python3 evaluation/wmt19_biomed/gen_align_file.py \
+	--src_fn ../data/wmt19_biomed_modified/align.tok.mark.gc-s \
+	--tgt_fn ../data/wmt19_biomed_modified/align.tok.mark.gc-t \
+	--out_fn ../data/wmt19_biomed_modified/align_galechurch_zh_en.txt
+
+
+# Evaluate Gale-Church results:
+python3 evaluation/wmt19_biomed/evaluate.py \
+	--align_fn ../data/wmt19_biomed_modified/align_validation_zh_en.txt \
+	--en_fn ../data/wmt19_biomed_modified/medline_zh2en_en.txt \
+	--zh_fn ../data/wmt19_biomed_modified/medline_zh2en_zh.txt \
+	--pred_fn ../data/wmt19_biomed_modified/align_galechurch_zh_en.txt \
+	--out_fn ../processed_data/evaluation/wmt19_biomed/evaluate/galechurch.pr
