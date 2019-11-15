@@ -46,7 +46,11 @@ bash evaluation/wmt19_biomed/modifications.sh
 # and generate sentence-to-sentence translation. Additionally, it will
 # also mark each sentence with doc#,# markers.
 bash evaluation/wmt19_biomed/translate.sh
+
+# Here I align with Bleualign, Gale-Church, and Moore's IBM 1 model.
 bash evaluation/wmt19_biomed/align.sh
+
+# This will generate src <=> tgt alignment. 
 python3 evaluation/wmt19_biomed/gen_align_file.py \
 	--src_fn ../data/wmt19_biomed_modified/align.tok.mark.ba-s \
 	--tgt_fn ../data/wmt19_biomed_modified/align.tok.mark.ba-t \
@@ -59,6 +63,7 @@ python3 evaluation/wmt19_biomed/evaluate.py \
 	--zh_fn ../data/wmt19_biomed_modified/medline_zh2en_zh.txt \
 	--pred_fn ../data/wmt19_biomed_modified/align_bleualign_zh_en.txt \
 	--out_fn ../processed_data/evaluation/wmt19_biomed/evaluate/bleualign.pr
+
 
 ## Gale-Church ##
 # Align with Gale-Church algorithm:
@@ -75,3 +80,18 @@ python3 evaluation/wmt19_biomed/evaluate.py \
 	--zh_fn ../data/wmt19_biomed_modified/medline_zh2en_zh.txt \
 	--pred_fn ../data/wmt19_biomed_modified/align_galechurch_zh_en.txt \
 	--out_fn ../processed_data/evaluation/wmt19_biomed/evaluate/galechurch.pr
+
+
+## Moore's (IBM 1) ##
+python3 evaluation/wmt19_biomed/gen_align_file.py \
+	--src_fn ../data/wmt19_biomed_modified/align.tok.mark.moore-s \
+	--tgt_fn ../data/wmt19_biomed_modified/align.tok.mark.moore-t \
+	--out_fn ../data/wmt19_biomed_modified/align_moore_zh_en.txt
+
+python3 evaluation/wmt19_biomed/evaluate.py \
+	--align_fn ../data/wmt19_biomed_modified/align_validation_zh_en.txt \
+	--en_fn ../data/wmt19_biomed_modified/medline_zh2en_en.txt \
+	--zh_fn ../data/wmt19_biomed_modified/medline_zh2en_zh.txt \
+	--pred_fn ../data/wmt19_biomed_modified/align_moore_zh_en.txt \
+	--out_fn ../processed_data/evaluation/wmt19_biomed/evaluate/moore.pr
+
