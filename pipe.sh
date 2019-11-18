@@ -97,4 +97,4 @@ python3 evaluation/wmt19_biomed/evaluate.py \
 
 
 # Manually aligned gold-standard for NEJM articles:
-bash evaluation/nejm/manual_align.sh
+bash preprocess/manual_align.sh

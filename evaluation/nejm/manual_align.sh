@@ -1,162 +1,324 @@
 # Align NEJM articles manually to create a gold-standard.
 # Randomly select 3 articles:
-"鼻咽癌的吉西他滨联合顺铂诱导化疗"
-zh	en
-1	1
-2	2
-3	3
-4	4
-5	5
-6	6
-7	7
-8	8
-9	9
-10	10
-11	11
-12	12
-13	13
-14	14
-15	15
-16	16
-17	17
-18	18,19
-19	20
-20	21
-21	22
-22	23
-23	24
-24	25
-25	26
-26	27
-27	28
-28	29
-29	30
-30	31
-31	32
-32	33
-33	34
-34	35
-35	36
-36	37
-37	38
-39	40
-40	41
-41	42
-42	43
-43	44
-44	45
-45	46
-46	47
-48	49
-49	50
-50	51
-51	52
-52	53
-53	54
-54	55
-55	56
-56	57
-57	58
-58	59
-59	60
-60	61
-61	62
-62	63
-63	64
-64	65
-65	66
-66	67
-67	68
-68	69
-69	70
-70	71,72
-71	73
-72	74
-73	75
-74	76
-75	77
-76	78
-77	79
-78	80
-79	81
-80	82
-81	83
-82	84
-83	85
-84	86
-85	87
-86	88
-87	89
-88	90
-89	91
-90	92
-91	93
-92	94
-93	95
-94	96
-95	97
-96	98
-97	99
-98	100
-99	101
-100	102
-101	103
-102	104
-103	105
-104	106
-105	107
-106	108
-107	109
-108	110
-109	111
-110	112
-111	113
-112	114
-113	115
-114	116
-115	117
-116	118
-117	119
-118	120
-119	121
-120	122
-121	123
-122	124
-123	125
-124	126
-125	127
-126	128
-127	129
-128	130
-129	131
-130	132
-131	133
-132	134
-133	135
-134	136
-135	137
-136	137
-137	139
-138	140
-139	141
-140	142
-141	143
-142	144
-143	145
-144	146
-145	147
-146	148
-147	149
-148	150
-149	151
-150	152
-151	153
-152	154
-153	155
-154	156
-155	157
-156	158
-	
-"饮水可对饮用含糖饮料产生多大程度的对抗作用"
-"帕妥珠单抗和曲妥珠单抗辅助治疗早期HER2阳性乳腺癌"
+# These are articles are in /mnt/scratch/boxiang/projects/\
+# med_translation/processed_data/preprocess/sentences/
 
+"鼻咽癌的吉西他滨联合顺铂诱导化疗"
+doc1	1 <=> 1	OK
+doc1	2 <=> 2	OK
+doc1	3 <=> 3	OK
+doc1	4 <=> 4	OK
+doc1	5 <=> 5	OK
+doc1	6 <=> 6	OK
+doc1	7 <=> 7	OK
+doc1	8 <=> 8	OK
+doc1	9 <=> 9	OK
+doc1	10 <=> 10	OK
+doc1	11 <=> 11	OK
+doc1	12 <=> 12	OK
+doc1	13 <=> 13	OK
+doc1	14 <=> 14	OK
+doc1	15 <=> 15	OK
+doc1	16 <=> 16	OK
+doc1	17 <=> 17	OK
+doc1	18 <=> 18,19	OK
+doc1	19 <=> 20	OK
+doc1	20 <=> 21	OK
+doc1	21 <=> 22	OK
+doc1	22 <=> 23	OK
+doc1	23 <=> 24	OK
+doc1	24 <=> 25	OK
+doc1	25 <=> 26	OK
+doc1	26 <=> 27	OK
+doc1	27 <=> 28	OK
+doc1	28 <=> 29	OK
+doc1	29 <=> 30	OK
+doc1	30 <=> 31	OK
+doc1	31 <=> 32	OK
+doc1	32 <=> 33	OK
+doc1	33 <=> 34	OK
+doc1	34 <=> 35	OK
+doc1	35 <=> 36	OK
+doc1	36 <=> 37	OK
+doc1	37 <=> 38	OK
+doc1	39 <=> 40	OK
+doc1	40 <=> 41	OK
+doc1	41 <=> 42	OK
+doc1	42 <=> 43	OK
+doc1	43 <=> 44	OK
+doc1	44 <=> 45	OK
+doc1	45 <=> 46	OK
+doc1	46 <=> 47	OK
+doc1	48 <=> 49	OK
+doc1	49 <=> 50	OK
+doc1	50 <=> 51	OK
+doc1	51 <=> 52	OK
+doc1	52 <=> 53	OK
+doc1	53 <=> 54	OK
+doc1	54 <=> 55	OK
+doc1	55 <=> 56	OK
+doc1	56 <=> 57	OK
+doc1	57 <=> 58	OK
+doc1	58 <=> 59	OK
+doc1	59 <=> 60	OK
+doc1	60 <=> 61	OK
+doc1	61 <=> 62	OK
+doc1	62 <=> 63	OK
+doc1	63 <=> 64	OK
+doc1	64 <=> 65	OK
+doc1	65 <=> 66	OK
+doc1	66 <=> 67	OK
+doc1	67 <=> 68	OK
+doc1	68 <=> 69	OK
+doc1	69 <=> 70	OK
+doc1	70 <=> 71,72	OK
+doc1	71 <=> 73	OK
+doc1	72 <=> 74	OK
+doc1	73 <=> 75	OK
+doc1	74 <=> 76	OK
+doc1	75 <=> 77	OK
+doc1	76 <=> 78	OK
+doc1	77 <=> 79	OK
+doc1	78 <=> 80	OK
+doc1	79 <=> 81	OK
+doc1	80 <=> 82	OK
+doc1	81 <=> 83	OK
+doc1	82 <=> 84	OK
+doc1	83 <=> 85	OK
+doc1	84 <=> 86	OK
+doc1	85 <=> 87	OK
+doc1	86 <=> 88	OK
+doc1	87 <=> 89	OK
+doc1	88 <=> 90	OK
+doc1	89 <=> 91	OK
+doc1	90 <=> 92	OK
+doc1	91 <=> 93	OK
+doc1	92 <=> 94	OK
+doc1	93 <=> 95	OK
+doc1	94 <=> 96	OK
+doc1	95 <=> 97	OK
+doc1	96 <=> 98	OK
+doc1	97 <=> 99	OK
+doc1	98 <=> 100	OK
+doc1	99 <=> 101	OK
+doc1	100 <=> 102	OK
+doc1	101 <=> 103	OK
+doc1	102 <=> 104	OK
+doc1	103 <=> 105	OK
+doc1	104 <=> 106	OK
+doc1	105 <=> 107	OK
+doc1	106 <=> 108	OK
+doc1	107 <=> 109	OK
+doc1	108 <=> 110	OK
+doc1	109 <=> 111	OK
+doc1	110 <=> 112	OK
+doc1	111 <=> 113	OK
+doc1	112 <=> 114	OK
+doc1	113 <=> 115	OK
+doc1	114 <=> 116	OK
+doc1	115 <=> 117	OK
+doc1	116 <=> 118	OK
+doc1	117 <=> 119	OK
+doc1	118 <=> 120	OK
+doc1	119 <=> 121	OK
+doc1	120 <=> 122	OK
+doc1	121 <=> 123	OK
+doc1	122 <=> 124	OK
+doc1	123 <=> 125	OK
+doc1	124 <=> 126	OK
+doc1	125 <=> 127	OK
+doc1	126 <=> 128	OK
+doc1	127 <=> 129	OK
+doc1	128 <=> 130	OK
+doc1	129 <=> 131	OK
+doc1	130 <=> 132	OK
+doc1	131 <=> 133	OK
+doc1	132 <=> 134	OK
+doc1	133 <=> 135	OK
+doc1	134 <=> 136	OK
+doc1	135 <=> 137	OK
+doc1	136 <=> 137	OK
+doc1	137 <=> 139	OK
+doc1	138 <=> 140	OK
+doc1	139 <=> 141	OK
+doc1	140 <=> 142	OK
+doc1	141 <=> 143	OK
+doc1	142 <=> 144	OK
+doc1	143 <=> 145	OK
+doc1	144 <=> 146	OK
+doc1	145 <=> 147	OK
+doc1	146 <=> 148	OK
+doc1	147 <=> 149	OK
+doc1	148 <=> 150	OK
+doc1	149 <=> 151	OK
+doc1	150 <=> 152	OK
+doc1	151 <=> 153	OK
+doc1	152 <=> 154	OK
+doc1	153 <=> 155	OK
+doc1	154 <=> 156	OK
+doc1	155 <=> 157	OK
+doc1	156 <=> 158	OK
+
+
+"饮水可对饮用含糖饮料产生多大程度的对抗作用"
+zh <=> en	OK
+doc2	1 <=> 1	OK
+doc2	2 <=> 2	OK
+doc2	3 <=> 3	OK
+doc2	4 <=> 4	OK
+doc2	5 <=> 5	OK
+doc2	6 <=> 6	OK
+doc2	7 <=> 7	OK
+doc2	8 <=> 8	OK
+doc2	9 <=> 9	OK
+doc2	10 <=> 10	OK
+doc2	11,12 <=> 11	OK
+
+
+"帕妥珠单抗和曲妥珠单抗辅助治疗早期HER2阳性乳腺癌"
+doc3	1 <=> 1	OK
+doc3	2 <=> 2	OK
+doc3	3 <=> 3	OK
+doc3	4 <=> 4	OK
+doc3	5 <=> 5	OK
+doc3	6 <=> 6	OK
+doc3	7 <=> 7	OK
+doc3	8 <=> 8	OK
+doc3	9 <=> 9	OK
+doc3	10 <=> 10	OK
+doc3	11 <=> 11	OK
+doc3	12 <=> 12	OK
+doc3	13 <=> 13	OK
+doc3	14 <=> 14	OK
+doc3	15 <=> 15	OK
+doc3	16 <=> 16	OK
+doc3	17 <=> 17	OK
+doc3	18,19 <=> 18,19	OK
+doc3	20 <=> 20	OK
+doc3	21 <=> 21	OK
+doc3	22 <=> 22	OK
+doc3	23 <=> 23	OK
+doc3	24 <=> 24	OK
+doc3	25 <=> 25	OK
+doc3	26 <=> 26	OK
+doc3	27 <=> 27	OK
+doc3	28 <=> 28	OK
+doc3	29 <=> 29	OK
+doc3	30 <=> 30	OK
+doc3	31 <=> 31	OK
+doc3	32 <=> 32	OK
+doc3	33 <=> 33	OK
+doc3	34 <=> 34	OK
+doc3	35 <=> 35	OK
+doc3	36 <=> 36	OK
+doc3	37 <=> 37	OK
+doc3	38 <=> 38	OK
+doc3	39 <=> 39	OK
+doc3	40 <=> 40	OK
+doc3	41 <=> 41	OK
+doc3	42 <=> 42	OK
+doc3	43 <=> 43	OK
+doc3	44 <=> 44	OK
+doc3	45 <=> 45	OK
+doc3	46 <=> 46	OK
+doc3	47 <=> 47	OK
+doc3	48 <=> 48	OK
+doc3	49 <=> 49	OK
+doc3	50 <=> 50	OK
+doc3	51 <=> 51	OK
+doc3	52 <=> 52	OK
+doc3	53 <=> 53	OK
+doc3	54 <=> 54	OK
+doc3	55 <=> 55	OK
+doc3	56 <=> 56	OK
+doc3	57 <=> 57	OK
+doc3	58 <=> 58	OK
+doc3	59 <=> 59	OK
+doc3	60 <=> 60	OK
+doc3	61 <=> 61	OK
+doc3	62 <=> 62	OK
+doc3	63 <=> 63	OK
+doc3	64 <=> 64	OK
+doc3	65 <=> 65	OK
+doc3	66 <=> 66	OK
+doc3	67 <=> 67	OK
+doc3	68 <=> 68	OK
+doc3	69 <=> 69	OK
+doc3	70 <=> 70	OK
+doc3	71 <=> 71	OK
+doc3	72 <=> 72	OK
+doc3	73 <=> 73	OK
+doc3	74 <=> 74	OK
+doc3	75 <=> 75	OK
+doc3	76 <=> 76	OK
+doc3	77 <=> 77	OK
+doc3	78 <=> 78	OK
+doc3	79 <=> 79	OK
+doc3	80 <=> 80	OK
+doc3	81 <=> 81	OK
+doc3	82 <=> 82	OK
+doc3	83 <=> 83	OK
+doc3	84 <=> 84	OK
+doc3	85 <=> 85	OK
+doc3	86 <=> 86	OK
+doc3	87 <=> 87	OK
+doc3	88 <=> 88	OK
+doc3	89 <=> 89	OK
+doc3	90 <=> 90	OK
+doc3	91 <=> 91	OK
+doc3	92 <=> 92	OK
+doc3	93 <=> 93	OK
+doc3	94 <=> 94	OK
+doc3	95 <=> 95	OK
+doc3	96 <=> 96	OK
+doc3	97 <=> 97	OK
+doc3	98 <=> 98	OK
+doc3	99 <=> 99	OK
+doc3	100 <=> 100	OK
+doc3	101 <=> 101	OK
+doc3	102 <=> 102	OK
+doc3	103 <=> 103	OK
+doc3	104 <=> 104	OK
+doc3	105 <=> 105	OK
+doc3	106 <=> 106	OK
+doc3	107 <=> 107	OK
+doc3	108 <=> 108	OK
+doc3	109 <=> 109	OK
+doc3	110 <=> 110	OK
+doc3	111 <=> 111	OK
+doc3	112 <=> 112	OK
+doc3	113 <=> 113	OK
+doc3	114 <=> 114	OK
+doc3	115 <=> 115	OK
+doc3	116 <=> 116	OK
+doc3	117 <=> 117	OK
+doc3	118 <=> 118	OK
+doc3	119 <=> 119	OK
+doc3	120 <=> 120	OK
+doc3	121 <=> 121	OK
+doc3	122 <=> 122	OK
+doc3	123 <=> 123	OK
+doc3	124 <=> 124	OK
+doc3	125 <=> 125	OK
+doc3	126 <=> 126	OK
+doc3	127 <=> 127	OK
+doc3	128 <=> 128	OK
+doc3	129 <=> 129	OK
+doc3	130 <=> 130	OK
+doc3	131 <=> 131	OK
+doc3	132 <=> 132	OK
+doc3	133 <=> 133	OK
+doc3	134 <=> 134	OK
+doc3	135 <=> 135	OK
+doc3	136 <=> 136	OK
+doc3	137 <=> 137	OK
+doc3	138 <=> 138	OK
+doc3	139 <=> 139	OK
+doc3	140 <=> 140	OK
+doc3	141 <=> 141	OK
+doc3	142 <=> 142	OK
+doc3	143 <=> 143	OK
+doc3	144 <=> 144	OK
+doc3	145 <=> 145	OK
+doc3	146 <=> 146	OK
+doc3	147 <=> 147	OK
