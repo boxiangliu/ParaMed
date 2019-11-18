@@ -16,7 +16,7 @@ $ONMT/tools/apply_bpe.py \
 
 # Translate to English:
 $onmt/bin/translate.py \
-	-model $model/zh-en_step_140000.pt \
+	-model $model/zh2en_step_140000.pt \
 	-src $data/medline_zh2en_zh.textonly.tok.bpe.txt \
 	-output $data/medline_zh2en_zh.textonly.tok.bpe.2en.txt \
 	-replace_unk -verbose \
