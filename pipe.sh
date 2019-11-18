@@ -95,3 +95,6 @@ python3 evaluation/wmt19_biomed/evaluate.py \
 	--pred_fn ../data/wmt19_biomed_modified/align_moore_zh_en.txt \
 	--out_fn ../processed_data/evaluation/wmt19_biomed/evaluate/moore.pr
 
+
+# Manually aligned gold-standard for NEJM articles:
+bash evaluation/nejm/manual_align.sh
