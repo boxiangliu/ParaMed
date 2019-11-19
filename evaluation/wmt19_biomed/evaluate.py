@@ -71,11 +71,27 @@ def align_en_zh(align, en, zh):
 
 
 def read_data(args):
-	en = pd.read_table(args.en_fn, names=["doc", "sent_id", "sent"])
-	zh = pd.read_table(args.zh_fn, names=["doc", "sent_id", "sent"])
+	shape_getter = pd.read_table(args.align_fn, nrows=10)
+	ncol = shape_getter.shape[1]
+	print(f"{ncol} columns detected in alignment file.")
 
-	align = pd.read_table(args.align_fn, names=["pmid", "doc", "align", "status"])
-	align = align_en_zh(align, en, zh)
+	if ncol == 3:
+		align = pd.read_table(args.align_fn, names=["doc", "align", "status"])
+	elif ncol == 4:
+		align = pd.read_table(args.align_fn, names=["pmid", "doc", "align", "status"])
+	else:
+		raise ValueError(f"Column = {ncol} has not been implemented.")
+	
+	if args.en_fn is not None and args.zh_fn is not None:
+
+		en = pd.read_table(args.en_fn, names=["doc", "sent_id", "sent"])
+		zh = pd.read_table(args.zh_fn, names=["doc", "sent_id", "sent"])
+		align = align_en_zh(align, en, zh)
+
+	else:
+		en = None
+		zh = None
+	
 	return align, en, zh
 
 

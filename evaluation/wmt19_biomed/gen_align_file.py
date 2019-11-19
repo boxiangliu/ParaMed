@@ -21,11 +21,11 @@ out_fn = args.out_fn
 def extract_markers(sent):
 	sent = sent.strip()
 
-	markers = re.findall("\|doc[0-9]{1,2},[0-9]{1,2}", sent)
+	markers = re.findall("\|\s{0,1}doc[0-9]+,[0-9]+", sent)
 	for marker in markers:
 		sent = sent.replace(marker, "")
 
-	doc_ids = set([x.split(",")[0].replace("|","") for x in markers])
+	doc_ids = set([x.split(",")[0].replace("|","").strip() for x in markers])
 	sent_ids = [x.split(",")[1] for x in markers]
 	
 	if len(doc_ids) == 1:
