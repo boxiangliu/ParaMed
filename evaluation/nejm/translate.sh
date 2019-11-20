@@ -17,6 +17,7 @@ for article in ${articles[@]}; do
 	echo Article: $article
 	echo Document No.: $n
 
+	## zh => en ##
 	# Apply BPE:
 	$ONMT/tools/apply_bpe.py \
 	-c ../processed_data/translation/wmt18/train_bpe/data/bpe-codes.joint \
@@ -35,6 +36,27 @@ for article in ${articles[@]}; do
 	cat $out_dir/${article}.zh.tok.bpe.2en \
 	| sed -E 's/(@@ )|(@@ ?$)//g' > $out_dir/${article}.zh.tok.2en
 
+
+	# en => zh
+	# Apply BPE:
+	$ONMT/tools/apply_bpe.py \
+	-c ../processed_data/translation/wmt18/train_bpe/data/bpe-codes.joint \
+	< $data/${article}.en.tok \
+	> $out_dir/${article}.en.tok.bpe
+
+	# Translate to Chinese:
+	$ONMT/onmt/bin/translate.py \
+	-model $model/en2zh_step_200000.pt \
+	-src $out_dir/${article}.en.tok.bpe \
+	-output $out_dir/${article}.en.tok.bpe.2zh \
+	-replace_unk -verbose \
+	-gpu 0
+
+	# Remove BPE characters:
+	cat $out_dir/${article}.en.tok.bpe.2zh \
+	| sed -E 's/(@@ )|(@@ ?$)//g' > $out_dir/${article}.en.tok.2zh
+
+
 	# Add document-sentence markers:
 	awk '{print $0" | doc"v1","NR}' \
 	v1=$n $data/${article}.zh.tok > \
@@ -48,4 +70,7 @@ for article in ${articles[@]}; do
 	v1=$n $out_dir/${article}.zh.tok.2en > \
 	$out_dir/doc${n}_zh.2en
 
+	awk '{print $0" | doc"v1","NR}' \
+	v1=$n $out_dir/${article}.en.tok.2zh > \
+	$out_dir/doc${n}_en.2zh
 done

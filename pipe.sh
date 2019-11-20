@@ -8,7 +8,7 @@ python3 crawler/crawl.py
 # Preprocess NEJM articles
 # Step 1:
 # Turn English sentences into lower case and normalize 
-# punctuations:
+# punctuations, also remove :
 bash preprocess/normalize.sh
 
 # Step 2:
@@ -16,8 +16,8 @@ bash preprocess/normalize.sh
 python3 preprocess/detect_sentences.py 
 
 # Step 3:
-# Tokenize sentences: 
-bash preprocess/tokenize.sh 
+# Tokenize sentences:
+bash preprocess/tokenize.sh
 
 
 ##################
@@ -110,43 +110,18 @@ bash evaluation/nejm/translate.sh
 # Here I align with Bleualign, Gale-Church, and Moore's IBM 1 model.
 bash evaluation/nejm/align.sh
 
+for algo in ba ba2 gc moore; do
+
 # This will generate src <=> tgt alignment. 
 python3 evaluation/wmt19_biomed/gen_align_file.py \
-	--src_fn ../processed_data/evaluation/nejm/translation/align.tok.mark.ba-s \
-	--tgt_fn ../processed_data/evaluation/nejm/translation/align.tok.mark.ba-t \
-	--out_fn ../processed_data/evaluation/nejm/translation/align_bleualign_zh_en.txt
+	--src_fn ../processed_data/evaluation/nejm/translation/align.tok.mark.${algo}-s \
+	--tgt_fn ../processed_data/evaluation/nejm/translation/align.tok.mark.${algo}-t \
+	--out_fn ../processed_data/evaluation/nejm/translation/align_${algo}_zh_en.txt
 
 
-# Evaluate bleualign with WMT18 baseline model:
+# Evaluate algorithm with WMT18 baseline model:
 python3 evaluation/wmt19_biomed/evaluate.py \
 	--align_fn ../processed_data/preprocess/alignment/align_validation_zh_en.txt \
-	--pred_fn ../processed_data/evaluation/nejm/translation/align_bleualign_zh_en.txt \
-	--out_fn ../processed_data/evaluation/nejm/translation/evaluate/bleualign.pr
-
-
-## Gale-Church ##
-# This will generate src <=> tgt alignment. 
-python3 evaluation/wmt19_biomed/gen_align_file.py \
-	--src_fn ../processed_data/evaluation/nejm/translation/align.tok.mark.gc-s \
-	--tgt_fn ../processed_data/evaluation/nejm/translation/align.tok.mark.gc-t \
-	--out_fn ../processed_data/evaluation/nejm/translation/align_galechurch_zh_en.txt
-
-
-# Evaluate Gale-Church algorithm:
-python3 evaluation/wmt19_biomed/evaluate.py \
-	--align_fn ../processed_data/preprocess/alignment/align_validation_zh_en.txt \
-	--pred_fn ../processed_data/evaluation/nejm/translation/align_galechurch_zh_en.txt \
-	--out_fn ../processed_data/evaluation/nejm/translation/evaluate/galechurch.pr
-
-
-## Moore's (IBM 1) ##
-python3 evaluation/wmt19_biomed/gen_align_file.py \
-	--src_fn ../processed_data/evaluation/nejm/translation/align.tok.mark.moore-s \
-	--tgt_fn ../processed_data/evaluation/nejm/translation/align.tok.mark.moore-t \
-	--out_fn ../processed_data/evaluation/nejm/translation/align_moore_zh_en.txt
-
-# Evaluate Moore's algorithm:
-python3 evaluation/wmt19_biomed/evaluate.py \
-	--align_fn ../processed_data/preprocess/alignment/align_validation_zh_en.txt \
-	--pred_fn ../processed_data/evaluation/nejm/translation/align_moore_zh_en.txt \
-	--out_fn ../processed_data/evaluation/nejm/translation/evaluate/moore.pr
+	--pred_fn ../processed_data/evaluation/nejm/translation/align_${algo}_zh_en.txt \
+	--out_fn ../processed_data/evaluation/nejm/translation/evaluate/${algo}.pr
+done

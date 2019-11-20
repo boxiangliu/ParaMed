@@ -15,6 +15,22 @@ cat $data/doc*.ba-s > $data/align.tok.mark.ba-s
 cat $data/doc*.ba-t > $data/align.tok.mark.ba-t
 rm $data/doc*.ba-{s,t}
 
+
+# Bleualign (both directions):
+for doc in `ls $data/doc*_zh.snt`; do
+	$bleualign --factored \
+	-s $doc \
+	-t ${doc/_zh/_en} \
+	--srctotarget ${doc/.snt/.2en} \
+	--targettosrc ${doc/.snt/.2zh} \
+	--printempty --verbosity 2 \
+	-o ${doc/_zh.snt/.ba2}
+done 
+cat $data/doc*.ba2-s > $data/align.tok.mark.ba2-s
+cat $data/doc*.ba2-t > $data/align.tok.mark.ba2-t
+rm $data/doc*.ba2-{s,t}
+
+
 # Gale-Church:
 for doc in `ls $data/doc*_zh.snt`; do
 	$bleualign --factored \

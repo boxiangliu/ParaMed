@@ -4,6 +4,7 @@ import sys
 import glob
 
 import pandas as pd
+sys.path.append("/mnt/scratch/boxiang/projects/med_translation/scripts")
 from utils.utils import Article, get_nltk_sent_tokenizer,\
 	RegexSentenceTokenizer
 

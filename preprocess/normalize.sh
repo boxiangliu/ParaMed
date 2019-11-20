@@ -11,7 +11,7 @@ for f in $in_dir/*/*/*.en; do
 	if [[ -f $out_dir/$out_fn ]]; then
 		echo "File $f exists."
 	else
-		cat $f | $lowercase | $normalize > $out_dir/$out_fn
+		cat $f | $lowercase | $normalize | sed '/^$/d' > $out_dir/$out_fn
 	fi
 done
 
@@ -20,6 +20,6 @@ for f in $in_dir/*/*/*.zh; do
 	if [[ -f $out_dir/$out_fn ]]; then
 		echo "File $f exists."
 	else
-		cat $f | $lowercase > $out_dir/$out_fn
+		cat $f | $lowercase | $normalize | sed '/^$/d' > $out_dir/$out_fn
 	fi
 done
