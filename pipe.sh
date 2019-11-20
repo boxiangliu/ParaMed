@@ -70,3 +70,9 @@ bash evaluation/nejm/align.sh
 
 # Evaluate precision and recall for different algorithms:
 bash evaluation/nejm/evaluate.sh
+
+
+#############
+# Alignment #
+#############
+# Use Moore's algorithm to align:

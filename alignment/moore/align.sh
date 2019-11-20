@@ -1,12 +1,12 @@
 moore=~/software/bilingual-sentence-aligner/
-data=/mnt/scratch/boxiang/projects/med_translation/processed_data/preprocess/sentences
+data=/mnt/scratch/boxiang/projects/med_translation/processed_data/preprocess/sentences/
 out_dir=/mnt/scratch/boxiang/projects/med_translation/processed_data/alignment/moore/align/
-mkdir -p $out_dir
+[[ ! -f $out_dir ]] && mkdir -p $out_dir
 
 
 if [[ -f $out_dir/mapdocs_zh_en.txt ]]; then
 	rm $out_dir/mapdocs_zh_en.txt
-done
+fi
 
 n=0
 for article in `ls $data/*.zh.tok`; do
@@ -27,9 +27,9 @@ for article in `ls $data/*.zh.tok`; do
 	en_art=$out_dir/doc${n}_en.snt
 	zh_art=$out_dir/doc${n}_zh.snt
 
-	if [[ $n =~ ^(60|182|754|218|597|1219|546|870|225|1782|379|1121|2026|294|499|1665|1811|838|1897|13|488|871|1558|137|1086|473|1071|1386|1716|1300|1119|211|923|1292|1641|613|509|1704|380)$ ]]; then
-		echo Pass
-	else
+	zh_lines=`wc -l ${prefix}.zh.tok | cut -d" " -f1`
+	en_lines=`wc -l ${prefix}.en.tok | cut -d" " -f1`
+	if [[ $zh_lines -gt 0 && $en_lines -gt 0 ]]; then
 		awk '{print $0" | doc"v1","NR}' \
 		v1=$n ${prefix}.zh.tok > \
 		$zh_art
@@ -37,12 +37,31 @@ for article in `ls $data/*.zh.tok`; do
 		awk '{print $0" | doc"v1","NR}' \
 		v1=$n ${prefix}.en.tok > \
 		$en_art
+	else
+		echo "$prefix has 0 lines."
 	fi
 done
 
+# Adding parallel corpora for IBM 1 model construction.
+head -n 100000 /mnt/data/boxiang/wmt18/train/corpus.zh > \
+$out_dir/wmt18_zh.snt
+head -n 100000 /mnt/data/boxiang/wmt18/train/corpus.en > \
+$out_dir/wmt18_en.snt
 
+
+# Align with Moore's algorithm:
 cd $moore # Must run in this directory
 perl $moore/align-sents-all-multi-file.pl \
 $out_dir/ 0.5
-cat $data/doc*_zh.snt.aligned > $data/align.tok.mark.moore-s
-cat $data/doc*_en.snt.aligned > $data/align.tok.mark.moore-t
+cat $out_dir/doc*_zh.snt.aligned > $out_dir/nejm.zh
+cat $out_dir/doc*_en.snt.aligned > $out_dir/nejm.en
+
+# Generate alignment file
+python3 evaluation/wmt19_biomed/gen_align_file.py \
+	--src_fn $out_dir/nejm.zh \
+	--tgt_fn $out_dir/nejm.en \
+	--out_fn $out_dir/nejm.align
+
+# Remove line markers:
+sed -i -E "s/ \| doc[0-9]+,[0-9]+//g" $out_dir/nejm.zh
+sed -i -E "s/ \| doc[0-9]+,[0-9]+//g" $out_dir/nejm.en
