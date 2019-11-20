@@ -65,3 +65,13 @@ python3 evaluation/wmt19_biomed/gen_align_file.py \
 # Remove line markers:
 sed -i -E "s/ \| doc[0-9]+,[0-9]+//g" $out_dir/nejm.zh
 sed -i -E "s/ \| doc[0-9]+,[0-9]+//g" $out_dir/nejm.en
+
+# Remove intermediate files:
+rm $out_dir/*.words
+rm $out_dir/*.aligned
+rm $out_dir/*.snt
+rm $out_dir/*.search-nodes
+rm $out_dir/*.length-backtrace
+rm $out_dir/*.backtrace
+rm $out_dir/*.train
+rm $out_dir/{model-one,sentence-file-pair-list}

@@ -76,3 +76,4 @@ bash evaluation/nejm/evaluate.sh
 # Alignment #
 #############
 # Use Moore's algorithm to align:
+bash alignment/moore/align.sh
