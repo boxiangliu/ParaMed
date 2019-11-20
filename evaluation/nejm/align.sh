@@ -11,8 +11,8 @@ for doc in `ls $data/doc*_zh.snt`; do
 	--printempty --verbosity 2 \
 	-o ${doc/_zh.snt/.ba}
 done 
-cat $data/doc*.ba-s > $data/align.tok.mark.ba-s
-cat $data/doc*.ba-t > $data/align.tok.mark.ba-t
+cat $data/doc*.ba-s > $data/align.ba-s
+cat $data/doc*.ba-t > $data/align.ba-t
 rm $data/doc*.ba-{s,t}
 
 
@@ -22,12 +22,12 @@ for doc in `ls $data/doc*_zh.snt`; do
 	-s $doc \
 	-t ${doc/_zh/_en} \
 	--srctotarget ${doc/.snt/.2en} \
-	--targettosrc ${doc/.snt/.2zh} \
+	--targettosrc ${doc/_zh.snt/_en.2zh} \
 	--printempty --verbosity 2 \
 	-o ${doc/_zh.snt/.ba2}
 done 
-cat $data/doc*.ba2-s > $data/align.tok.mark.ba2-s
-cat $data/doc*.ba2-t > $data/align.tok.mark.ba2-t
+cat $data/doc*.ba2-s > $data/align.ba2-s
+cat $data/doc*.ba2-t > $data/align.ba2-t
 rm $data/doc*.ba2-{s,t}
 
 
@@ -43,8 +43,8 @@ for doc in `ls $data/doc*_zh.snt`; do
 	-o ${doc/_zh.snt/.gc}
 done 
 
-cat $data/doc*.gc-s > $data/align.tok.mark.gc-s
-cat $data/doc*.gc-t > $data/align.tok.mark.gc-t
+cat $data/doc*.gc-s > $data/align.gc-s
+cat $data/doc*.gc-t > $data/align.gc-t
 rm $data/doc*.gc-{s,t}
 
 # Moore's algorithm (IBM 1):
@@ -61,5 +61,5 @@ $data/wmt18_en.snt
 cd $moore # Must run in this directory
 perl $moore/align-sents-all-multi-file.pl \
 $data/ 0.5
-cat $data/doc*_zh.snt.aligned > $data/align.tok.mark.moore-s
-cat $data/doc*_en.snt.aligned > $data/align.tok.mark.moore-t
+cat $data/doc*_zh.snt.aligned > $data/align.moore-s
+cat $data/doc*_en.snt.aligned > $data/align.moore-t

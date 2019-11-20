@@ -73,4 +73,6 @@ for article in ${articles[@]}; do
 	awk '{print $0" | doc"v1","NR}' \
 	v1=$n $out_dir/${article}.en.tok.2zh > \
 	$out_dir/doc${n}_en.2zh
+
+	rm $out_dir/$article*
 done

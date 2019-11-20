@@ -22,7 +22,7 @@ args = parser.parse_args()
 os.makedirs(os.path.dirname(args.out_fn), exist_ok=True)
 
 # Example
-# args = Namespace(align_fn="../data/wmt19_biomed_modified/align_validation_zh_en.txt",
+# args = argparse.Namespace(align_fn="../data/wmt19_biomed_modified/align_validation_zh_en.txt",
 # 			  en_fn="../data/wmt19_biomed_modified/medline_zh2en_en.txt",
 # 			  zh_fn="../data/wmt19_biomed_modified/medline_zh2en_zh.txt",
 # 			  pred_fn="../data/wmt19_biomed_modified/align_bleualign_zh_en.txt",
@@ -61,8 +61,8 @@ def align_en_zh(align, en, zh):
 					en_sent += e["sent"].iloc[w]
 
 			alignment["doc"].append(doc)
-			alignment["status"].append(status)
 			alignment["align"].append("{} <=> {}".format(i,j))
+			alignment["status"].append(status)
 			alignment["zh"].append(zh_sent)
 			alignment["en"].append(en_sent)
 
@@ -129,32 +129,47 @@ def align_type(x):
 			out.append("{} - {}".format(min_len, max_len))
 	return out
 
-def main():
-	align, en, zh = read_data(args)
-	pred = pd.read_table(args.pred_fn, names=["doc", "align","status", "zh", "en"])
-	merged = pd.merge(align[["doc", "align", "status"]], 
-		pred[["doc", "align", "status"]], 
-		on=["doc", "align"], how="outer", suffixes=("_val", "_pred")).\
-		sort_values(["doc", "align"])
 
-	merged["align_val"] = merged.apply(lambda x: copy_validation_align(x), axis=1)
-	merged["align_pred"] = merged.apply(lambda x: copy_pred_align(x), axis=1)
-	merged["type_val"] = align_type(merged["align_val"])
-	merged["type_pred"] = align_type(merged["align_pred"])
+def get_precision_recall(valid, pred):
+	types = valid["type"].unique()
+	print(f"Alignment types: {types}", flush=True)
+
+	def paste(x):
+		return ":".join([x["doc"], x["align"]])
 
 	pr_table = defaultdict(list)
-	for atype in merged["type_val"].unique():
-		if atype is np.NaN:
-			continue
+	for _type in types:
+		try:
+			valid_of_type = valid[valid["type"] == _type].\
+				apply(lambda x: paste(x), axis=1).tolist()
+			pred_of_type = pred[pred["type"] == _type].\
+				apply(lambda x: paste(x), axis=1).tolist()
 
-		truths = merged.assign(val=lambda x: x["type_val"].eq(atype),
-				  ble=lambda x: x["type_pred"].eq(atype))
-		precision = precision_score(truths["val"], truths["ble"])
-		recall = recall_score(truths["val"], truths["ble"])
-		pr_table["type"].append(atype)
-		pr_table["precision"].append(precision)
-		pr_table["recall"].append(recall)
+			TP = sum([x in pred_of_type for x in valid_of_type])
+			FN = sum([x not in pred_of_type for x in valid_of_type])
+			FP = sum([x not in valid_of_type for x in pred_of_type])
+
+			precision = TP / (TP + FP)
+			recall = TP / (TP + FN)
+
+			pr_table["type"].append(_type)
+			pr_table["precision"].append(precision)
+			pr_table["recall"].append(recall)
+		except:
+			print(f"Type {_type} not found.")
+
 	pr_table = pd.DataFrame(pr_table)
+	return pr_table
+
+
+
+def main():
+	valid, en, zh = read_data(args)
+	pred = pd.read_table(args.pred_fn, 
+		names=["doc", "align","status", "zh", "en"])
+	valid["type"] = align_type(valid["align"])
+	pred["type"] = align_type(pred["align"])
+	pr_table = get_precision_recall(valid, pred)
 	pr_table.to_csv(args.out_fn, sep="\t", index=False)
 
 if __name__ == "__main__":
