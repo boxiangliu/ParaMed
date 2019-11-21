@@ -16,12 +16,27 @@ for article in `ls $data/*.zh.tok`; do
 	echo -e "doc${n}\t$base" >> $out_dir/mapdocs_zh_en.txt
 done
 
+
+# These validation files needs to be removed from the training set.
+valid_art=(鼻咽癌的吉西他滨联合顺铂诱导化疗 \
+	饮水可对饮用含糖饮料产生多大程度的对抗作用 \
+	帕妥珠单抗和曲妥珠单抗辅助治疗早期HER2阳性乳腺癌)
+
+art_no=()
+for art in ${valid_art[@]}; do
+	art_no+=(`grep $art $out_dir/mapdocs_zh_en.txt | awk '{print $1}'`)
+done
+
 n=0
 for article in `ls $data/*.zh.tok`; do
 	n=$(($n+1))
 	prefix=${article/.zh.tok/}
-	echo Article No.: $n
-	echo Name: $prefix
+
+	# Exclude validation files:
+	if [[ ${art_no[@]} =~ (^|[[:space:]])"doc$n"($|[[:space:]]) ]]; then
+		echo "doc$n is in valid set; skipping..."
+		continue
+	fi
 
 	base=`basename $prefix`
 	en_art=$out_dir/doc${n}_en.snt
@@ -56,7 +71,9 @@ $out_dir/ 0.5
 cat $out_dir/doc*_zh.snt.aligned > $out_dir/nejm.zh
 cat $out_dir/doc*_en.snt.aligned > $out_dir/nejm.en
 
+
 # Generate alignment file
+cd $med_translation/scripts
 python3 evaluation/wmt19_biomed/gen_align_file.py \
 	--src_fn $out_dir/nejm.zh \
 	--tgt_fn $out_dir/nejm.en \
@@ -67,11 +84,12 @@ sed -i -E "s/ \| doc[0-9]+,[0-9]+//g" $out_dir/nejm.zh
 sed -i -E "s/ \| doc[0-9]+,[0-9]+//g" $out_dir/nejm.en
 
 # Remove intermediate files:
-rm $out_dir/*.words
-rm $out_dir/*.aligned
-rm $out_dir/*.snt
-rm $out_dir/*.search-nodes
-rm $out_dir/*.length-backtrace
-rm $out_dir/*.backtrace
-rm $out_dir/*.train
-rm $out_dir/{model-one,sentence-file-pair-list}
+mkdir $out_dir/intermediate/
+mv $out_dir/*.words $out_dir/intermediate/
+mv $out_dir/*.aligned $out_dir/intermediate/
+mv $out_dir/*.snt $out_dir/intermediate/
+mv $out_dir/*.search-nodes $out_dir/intermediate/
+mv $out_dir/*.length-backtrace $out_dir/intermediate/
+mv $out_dir/*.backtrace $out_dir/intermediate/
+mv $out_dir/*.train $out_dir/intermediate/
+mv $out_dir/{model-one,sentence-file-pair-list} $out_dir/intermediate/

@@ -40,6 +40,6 @@ for article in ${articles[@]}; do
 	
 	for lang in zh en; do
 		awk 'BEGIN {OFS="\t"}{print "doc"n,NR,$0}' n=$count \
-		$sent_dir/$article.$lang >> $out_dir/nejm_valid.$lang
+		$sent_dir/$article.$lang.tok >> $out_dir/nejm_valid.$lang
 	done
 done
