@@ -2,12 +2,8 @@ import argparse
 import os
 import pandas as pd
 pd.options.display.max_columns = 99
-pd.options.display.max_rows = 1000
 import numpy as np
 from collections import defaultdict
-import ipdb
-from sklearn.metrics import precision_score,\
-	recall_score
 
 parser = argparse.ArgumentParser(description="Generate precision-recall "\
 	"table for sentence alignments.")
@@ -95,19 +91,6 @@ def read_data(args):
 	return align, en, zh
 
 
-def copy_validation_align(row):
-	if row["status_val"] is not np.NaN:
-		return row["align"]
-	else:
-		return np.NaN
-
-def copy_pred_align(row):
-	if row["status_pred"] is not np.NaN \
-		or "omitted" in row["align"]:
-		return row["align"]
-	else:
-		return np.NaN
-
 def align_type(x):
 	out = []
 	for i in x:
@@ -160,7 +143,6 @@ def get_precision_recall(valid, pred):
 
 	pr_table = pd.DataFrame(pr_table)
 	return pr_table
-
 
 
 def main():
