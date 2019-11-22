@@ -8,8 +8,8 @@ DATA=../processed_data/alignment/moore/align/
 BPE_DIR=../processed_data/translation/wmt18/train_bpe/data/
 TRAIN_SRC=$DATA/nejm.zh
 TRAIN_TGT=$DATA/nejm.en
-# VALID_SRC=$DATA/dev/newsdev2017.tc.zh
-# VALID_TGT=$DATA/dev/newsdev2017.tc.en
+VALID_SRC=../processed_data/preprocess/alignment/nejm_valid.parallel.zh
+VALID_TGT=../processed_data/preprocess/alignment/nejm_valid.parallel.en
 # BPE_OPS=90000
 
 echo "Output dir = $OUT"
@@ -23,9 +23,9 @@ echo "Step 1a: Preprocess inputs"
 echo "BPE on source"
 
 $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.joint < $TRAIN_SRC > $OUT/data/train.src
-# $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.joint < $VALID_SRC > $OUT/data/valid.src
+$ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.joint < $VALID_SRC > $OUT/data/valid.src
 $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.joint < $TRAIN_TGT > $OUT/data/train.tgt
-# $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.joint < $VALID_TGT > $OUT/data/valid.tgt
+$ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.joint < $VALID_TGT > $OUT/data/valid.tgt
 
 #: <<EOF
 echo "Step 1b: Preprocess"
@@ -63,7 +63,7 @@ python $ONMT/train.py \
 -encoder_type transformer \
 -decoder_type transformer \
 -position_encoding \
--train_steps 200000 \
+-train_steps 300000 \
 -max_generator_batches 2 \
 -dropout 0.1 \
 -batch_size 4096 \
@@ -83,6 +83,8 @@ python $ONMT/train.py \
 -save_checkpoint_steps 10000 \
 -world_size 8 \
 -gpu_ranks 0 1 2 3 4 5 6 7 \
+-train_from "../processed_data/translation/\
+wmt18/train_bpe/models/zh2en_step_140000.pt" \
 &> $OUT/models/zh2en.log
 
 
@@ -97,7 +99,7 @@ python $ONMT/train.py \
 -encoder_type transformer \
 -decoder_type transformer \
 -position_encoding \
--train_steps 200000 \
+-train_steps 300000 \
 -max_generator_batches 2 \
 -dropout 0.1 \
 -batch_size 4096 \
@@ -116,40 +118,11 @@ python $ONMT/train.py \
 -valid_steps 10000 \
 -save_checkpoint_steps 10000 \
 -world_size 8 \
--gpu_ranks 0 1 2 3 4 5 6 7\
+-gpu_ranks 0 1 2 3 4 5 6 7 \
+-train_from "../processed_data/translation/\
+wmt18/train_bpe/models/en2zh_step_200000.pt" \
 &> $OUT/models/en2zh.log
 
-python restartsub.py M40x8 8 en2zh "python $ONMT/train.py \
--data $OUT/data/en2zh/processed \
--save_model $OUT/models/en2zh \
--layers 6 \
--rnn_size 512 \
--word_vec_size 512 \
--transformer_ff 2048 \
--heads 8  \
--encoder_type transformer \
--decoder_type transformer \
--position_encoding \
--train_steps 200000 \
--max_generator_batches 2 \
--dropout 0.1 \
--batch_size 4096 \
--batch_type tokens \
--normalization tokens \
--accum_count 2 \
--optim adam \
--adam_beta2 0.998 \
--decay_method noam \
--warmup_steps 8000 \
--learning_rate 2 \
--max_grad_norm 0 \
--param_init 0 \
--param_init_glorot \
--label_smoothing 0.1 \
--valid_steps 10000 \
--save_checkpoint_steps 5000 \
--world_size 8 \
--gpu_ranks 0 1 2 3 4 5 6 7"
 
 echo "Step 3: Translate Dev"
 model=$OUT/models/zh2en_step_140000.pt

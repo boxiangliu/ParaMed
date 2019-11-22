@@ -29,7 +29,7 @@ bash preprocess/tokenize.sh
 
 # Train zh -> en on WMT18 BPE data:
 # Do not run (only run on GPU nodes)
-bash translation/wmt18/train_bpe.sh
+bash translation/wmt18/train.sh
 
 ##############
 # Evaluation #
@@ -84,3 +84,18 @@ python3 utils/gen_para_corp.py \
 	--zh_fn ../processed_data/preprocess/alignment/nejm_valid.zh \
 	--en_fn ../processed_data/preprocess/alignment/nejm_valid.en \
 	--out_fn ../processed_data/preprocess/alignment/nejm_valid.parallel
+
+
+###############
+# Translation #
+###############
+# Testing the WMT18 model on NEJM journal:
+python3 translation/wmt18/test.sh
+
+
+# Fine-tune on NEJM dataset:
+python3 translation/nejm/train.sh
+
+
+# Test on NEJM dataset:
+python3 translation/nejm/test.sh
