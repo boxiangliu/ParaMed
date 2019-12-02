@@ -123,22 +123,4 @@ python $ONMT/train.py \
 wmt18/train_bpe/models/en2zh_step_200000.pt" \
 &> $OUT/models/en2zh.log
 
-
-echo "Step 3: Translate Dev"
-model=$OUT/models/zh2en_step_140000.pt
-python $ONMT/translate.py -model $model \
-    -src $OUT/data/valid.src \
-    -output $OUT/test/valid.out \
-    -replace_unk -verbose -gpu 0 > $OUT/test/valid.log
-
-
-echo "BPE decoding/detokenising target to match with references"
-mv $OUT/test/valid.out{,.bpe} 
-cat $OUT/test/valid.out.bpe | sed -E 's/(@@ )|(@@ ?$)//g' > $OUT/test/valid.out
-
-
-echo "Step 4: Evaluate Dev"
-$ONMT/tools/multi-bleu-detok.perl $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.tc.bleu
-$ONMT/tools/multi-bleu-detok.perl -lc $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.lc.bleu
-
 #===== EXPERIMENT END ======
