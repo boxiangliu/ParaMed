@@ -82,3 +82,10 @@ for article in ${articles[@]}; do
 		$sent_dir/$article.$lang.tok >> $out_dir/nejm_valid.$lang
 	done
 done
+
+
+# The next step is to modify the manual align file
+# 1. add doc# at the beginning of each line
+# 2. add OK at the end of each line
+# 3. add <=> between English and Chinese line numbers
+# 4. append lines to $out_dir/align_validation_zh_en.txt
