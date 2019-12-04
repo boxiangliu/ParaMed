@@ -1,4 +1,5 @@
 moore=~/software/bilingual-sentence-aligner/
+med_translation=/mnt/scratch/boxiang/projects/med_translation/
 data=/mnt/scratch/boxiang/projects/med_translation/processed_data/preprocess/sentences/
 out_dir=/mnt/scratch/boxiang/projects/med_translation/processed_data/alignment/moore/align/
 [[ ! -f $out_dir ]] && mkdir -p $out_dir
@@ -20,7 +21,16 @@ done
 # These validation files needs to be removed from the training set.
 valid_art=(鼻咽癌的吉西他滨联合顺铂诱导化疗 \
 	饮水可对饮用含糖饮料产生多大程度的对抗作用 \
-	帕妥珠单抗和曲妥珠单抗辅助治疗早期HER2阳性乳腺癌)
+	帕妥珠单抗和曲妥珠单抗辅助治疗早期HER2阳性乳腺癌 \
+	转移性去势抵抗性前列腺癌的恩杂鲁胺耐药 \
+	婴儿B群链球菌疾病预防指南更新 \
+	黑种人理发店可帮助顾客降血压 \
+	内科患者应用阿哌沙班和依诺肝素预防血栓形成的比较 \
+	尼拉帕尼用于铂类敏感型复发性卵巢癌的维持治疗 \
+	膀胱切除术的最佳手术方法：开放式手术与机器人辅助手术的比较 \
+	1型糖尿病患者胰岛素治疗中加用sotagliflozin的效果 \
+	HIV相关癌症和疾病 \
+	2017年慢性阻塞性肺疾病诊断和治疗的GOLD指南)
 
 art_no=()
 for art in ${valid_art[@]}; do
@@ -73,8 +83,7 @@ cat $out_dir/doc*_en.snt.aligned > $out_dir/nejm.en
 
 
 # Generate alignment file
-cd $med_translation/scripts
-python3 evaluation/wmt19_biomed/gen_align_file.py \
+python3 $med_translation/scripts/evaluation/wmt19_biomed/gen_align_file.py \
 	--src_fn $out_dir/nejm.zh \
 	--tgt_fn $out_dir/nejm.en \
 	--out_fn $out_dir/nejm.align
