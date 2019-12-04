@@ -2,7 +2,7 @@ moore=~/software/bilingual-sentence-aligner/
 med_translation=/mnt/scratch/boxiang/projects/med_translation/
 data=/mnt/scratch/boxiang/projects/med_translation/processed_data/preprocess/sentences/
 out_dir=/mnt/scratch/boxiang/projects/med_translation/processed_data/alignment/moore/align/
-[[ ! -f $out_dir ]] && mkdir -p $out_dir
+[[ ! -f $out_dir/intermediate/ ]] && mkdir $out_dir/intermediate/
 
 
 if [[ -f $out_dir/mapdocs_zh_en.txt ]]; then
@@ -49,8 +49,8 @@ for article in `ls $data/*.zh.tok`; do
 	fi
 
 	base=`basename $prefix`
-	en_art=$out_dir/doc${n}_en.snt
-	zh_art=$out_dir/doc${n}_zh.snt
+	en_art=$out_dir/intermediate/doc${n}_en.snt
+	zh_art=$out_dir/intermediate/doc${n}_zh.snt
 
 	zh_lines=`wc -l ${prefix}.zh.tok | cut -d" " -f1`
 	en_lines=`wc -l ${prefix}.en.tok | cut -d" " -f1`
@@ -69,17 +69,17 @@ done
 
 # Adding parallel corpora for IBM 1 model construction.
 head -n 100000 /mnt/data/boxiang/wmt18/train/corpus.zh > \
-$out_dir/wmt18_zh.snt
+$out_dir/intermediate/wmt18_zh.snt
 head -n 100000 /mnt/data/boxiang/wmt18/train/corpus.en > \
-$out_dir/wmt18_en.snt
+$out_dir/intermediate/wmt18_en.snt
 
 
 # Align with Moore's algorithm:
 cd $moore # Must run in this directory
 perl $moore/align-sents-all-multi-file.pl \
-$out_dir/ 0.5
-cat $out_dir/doc*_zh.snt.aligned > $out_dir/nejm.zh
-cat $out_dir/doc*_en.snt.aligned > $out_dir/nejm.en
+$out_dir/intermediate 0.5
+cat $out_dir/intermediate/doc*_zh.snt.aligned > $out_dir/nejm.zh
+cat $out_dir/intermediate/doc*_en.snt.aligned > $out_dir/nejm.en
 
 
 # Generate alignment file
@@ -91,14 +91,3 @@ python3 $med_translation/scripts/evaluation/wmt19_biomed/gen_align_file.py \
 # Remove line markers:
 sed -i -E "s/ \| doc[0-9]+,[0-9]+//g" $out_dir/nejm.zh
 sed -i -E "s/ \| doc[0-9]+,[0-9]+//g" $out_dir/nejm.en
-
-# Remove intermediate files:
-mkdir $out_dir/intermediate/
-mv $out_dir/*.words $out_dir/intermediate/
-mv $out_dir/*.aligned $out_dir/intermediate/
-mv $out_dir/*.snt $out_dir/intermediate/
-mv $out_dir/*.search-nodes $out_dir/intermediate/
-mv $out_dir/*.length-backtrace $out_dir/intermediate/
-mv $out_dir/*.backtrace $out_dir/intermediate/
-mv $out_dir/*.train $out_dir/intermediate/
-mv $out_dir/{model-one,sentence-file-pair-list} $out_dir/intermediate/
