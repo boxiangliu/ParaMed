@@ -72,9 +72,9 @@ bash evaluation/nejm/align.sh
 bash evaluation/nejm/evaluate.sh
 
 
-#############
-# Alignment #
-#############
+#####################
+# Machine Alignment #
+#####################
 # Use Moore's algorithm to align and create training set:
 bash alignment/moore/align.sh
 
@@ -85,6 +85,11 @@ python3 utils/gen_para_corp.py \
 	--en_fn ../processed_data/preprocess/alignment/nejm_valid.en \
 	--out_fn ../processed_data/preprocess/alignment/nejm_valid.parallel
 
+#########################
+# Crowdsource Alignment #
+#########################
+# Prepare articles
+python3 crowdsource/prep_articles.py
 
 ###############
 # Translation #

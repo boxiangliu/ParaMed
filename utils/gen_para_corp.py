@@ -11,7 +11,7 @@ parser.add_argument("--zh_fn", type=str, help="Path to English sentences.")
 parser.add_argument("--en_fn", type=str, help="Path to Chinese sentences.")
 parser.add_argument("--out_fn", type=str, help="Path to output directory.")
 args = parser.parse_args()
-os.makedirs(os.path.basename(args.out_fn), exist_ok=True)
+os.makedirs(os.path.dirname(args.out_fn), exist_ok=True)
 
 
 def align_en_zh(align, en, zh):
