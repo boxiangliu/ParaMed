@@ -34,22 +34,28 @@ def align_en_zh(align, en, zh):
 
 			zh_sent = ""
 			en_sent = ""
+			add_to_alignment = True
 
 			for v in i.split(","):
 				if v != "omitted":
 					v = int(v) - 1
 					zh_sent += z["sent"].iloc[v]
+				else:
+					add_to_alignment = False
 
 			for w in j.split(","):
 				if w != "omitted":
 					w = int(w) - 1
 					en_sent += e["sent"].iloc[w]
+				else:
+					add_to_alignment = False
 
-			alignment["doc"].append(doc)
-			alignment["align"].append("{} <=> {}".format(i,j))
-			alignment["status"].append(status)
-			alignment["zh"].append(zh_sent)
-			alignment["en"].append(en_sent)
+			if add_to_alignment:
+				alignment["doc"].append(doc)
+				alignment["align"].append("{} <=> {}".format(i,j))
+				alignment["status"].append(status)
+				alignment["zh"].append(zh_sent)
+				alignment["en"].append(en_sent)
 
 	alignment = pd.DataFrame(alignment)
 	return alignment

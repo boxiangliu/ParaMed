@@ -37,7 +37,8 @@ python $ONMT/preprocess.py \
     -train_tgt $OUT/data/train.tgt \
     -valid_src $OUT/data/valid.src \
     -valid_tgt $OUT/data/valid.tgt \
-    -save_data $OUT/data/zh2en/processed
+    -save_data $OUT/data/zh2en/processed \
+    -overwrite
 
 # en -> zh
 python $ONMT/preprocess.py \
@@ -47,7 +48,8 @@ python $ONMT/preprocess.py \
     -train_tgt $OUT/data/train.src \
     -valid_src $OUT/data/valid.tgt \
     -valid_tgt $OUT/data/valid.src \
-    -save_data $OUT/data/en2zh/processed
+    -save_data $OUT/data/en2zh/processed \
+    -overwrite
 
 
 echo "Step 2: Train"
