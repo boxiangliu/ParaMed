@@ -71,6 +71,8 @@ bash evaluation/nejm/align.sh
 # Evaluate precision and recall for different algorithms:
 bash evaluation/nejm/evaluate.sh
 
+# Visually compare Precision-Recall across methods:
+python3 evaluation/nejm/vis_pr.py
 
 #####################
 # Machine Alignment #
