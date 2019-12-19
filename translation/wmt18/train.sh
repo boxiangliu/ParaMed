@@ -168,4 +168,8 @@ echo "Step 4: Evaluate Dev"
 $ONMT/tools/multi-bleu-detok.perl $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.tc.bleu
 $ONMT/tools/multi-bleu-detok.perl -lc $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.lc.bleu
 
+$ONMT/tools/multi-bleu.perl $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.tc.bleu
+$ONMT/tools/multi-bleu.perl -lc $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.lc.bleu
+
+~/software/mosesdecoder/scripts/generic/mteval-v13a.pl -r $OUT/data/valid.tgt -s $OUT/data/valid.src -t $OUT/test/valid.out
 #===== EXPERIMENT END ======

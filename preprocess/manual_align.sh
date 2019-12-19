@@ -1,4 +1,4 @@
-p# Align NEJM articles manually to create a gold-standard.
+# Align NEJM articles manually to create a gold-standard.
 # Randomly select 3 articles:
 # These are articles are in /mnt/scratch/boxiang/projects/\
 # med_translation/processed_data/preprocess/sentences/
@@ -49,7 +49,7 @@ awk '{print NR,$0}' $sent_dir/HIV相关癌症和疾病.en | vim -
 awk '{print NR,$0}' $sent_dir/2017年慢性阻塞性肺疾病诊断和治疗的GOLD指南.zh | vim -
 awk '{print NR,$0}' $sent_dir/2017年慢性阻塞性肺疾病诊断和治疗的GOLD指南.en | vim -
 
-# NOTE: The results are placed in ../processed_data/preprocess/alignment/
+# NOTE: The results are placed in ../processed_data/preprocess/alignment/align_validation_zh_en.txt
 
 
 # This section creates two files

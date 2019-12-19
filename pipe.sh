@@ -107,3 +107,11 @@ python3 translation/nejm/train.sh
 
 # Test on NEJM dataset:
 python3 translation/nejm/test.sh
+
+
+#################
+# Visualization #
+#################
+
+# Make table 1
+python3 visulization/tables/tab1/tab1.py

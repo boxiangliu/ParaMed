@@ -13,7 +13,7 @@ parser.add_argument("--in_dir", type=str,
 	help="Path to precision recall tables.",
 	default="../processed_data/evaluation/nejm/evaluate/")
 parser.add_argument("--out_dir", type=str, help="Path to output directory.",
-	default="../processed_data/evaluation/nejm/evaluate/")
+	default="../processed_data/evaluation/nejm/vis_pr/")
 args = parser.parse_args()
 
 in_dir = args.in_dir
