@@ -10,6 +10,7 @@ TRAIN_TGT=$DATA/train/corpus.en
 VALID_SRC=$DATA/dev/newsdev2017.tc.zh
 VALID_TGT=$DATA/dev/newsdev2017.tc.en
 BPE_OPS=90000
+moses_scripts=~/software/mosesdecoder/scripts/
 
 echo "Output dir = $OUT"
 [ -d $OUT ] || mkdir -p $OUT
@@ -150,26 +151,3 @@ python restartsub.py M40x8 8 en2zh "python $ONMT/train.py \
 -save_checkpoint_steps 5000 \
 -world_size 8 \
 -gpu_ranks 0 1 2 3 4 5 6 7"
-
-echo "Step 3: Translate Dev"
-model=$OUT/models/zh2en_step_140000.pt
-python $ONMT/translate.py -model $model \
-    -src $OUT/data/valid.src \
-    -output $OUT/test/valid.out \
-    -replace_unk -verbose -gpu 0 > $OUT/test/valid.log
-
-
-echo "BPE decoding/detokenising target to match with references"
-mv $OUT/test/valid.out{,.bpe} 
-cat $OUT/test/valid.out.bpe | sed -E 's/(@@ )|(@@ ?$)//g' > $OUT/test/valid.out
-
-
-echo "Step 4: Evaluate Dev"
-$ONMT/tools/multi-bleu-detok.perl $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.tc.bleu
-$ONMT/tools/multi-bleu-detok.perl -lc $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.lc.bleu
-
-$ONMT/tools/multi-bleu.perl $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.tc.bleu
-$ONMT/tools/multi-bleu.perl -lc $OUT/data/valid.tgt < $OUT/test/valid.out > $OUT/test/valid.lc.bleu
-
-~/software/mosesdecoder/scripts/generic/mteval-v13a.pl -r $OUT/data/valid.tgt -s $OUT/data/valid.src -t $OUT/test/valid.out
-#===== EXPERIMENT END ======

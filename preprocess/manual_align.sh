@@ -73,13 +73,20 @@ articles=(鼻咽癌的吉西他滨联合顺铂诱导化疗 \
 [[ -f $out_dir/nejm_valid.zh ]] && rm $out_dir/nejm_valid.zh
 [[ -f $out_dir/nejm_valid.en ]] && rm $out_dir/nejm_valid.en
 
+[[ -f $out_dir/nejm_valid.tok.zh ]] && rm $out_dir/nejm_valid.tok.zh
+[[ -f $out_dir/nejm_valid.tok.en ]] && rm $out_dir/nejm_valid.tok.en
+
 count=0
 for article in ${articles[@]}; do
 	count=$(($count+1))
 	
 	for lang in zh en; do
 		awk 'BEGIN {OFS="\t"}{print "doc"n,NR,$0}' n=$count \
-		$sent_dir/$article.$lang.tok >> $out_dir/nejm_valid.$lang
+		$sent_dir/$article.$lang.tok >> $out_dir/nejm_valid.tok.$lang
+
+		awk 'BEGIN {OFS="\t"}{print "doc"n,NR,$0}' n=$count \
+		$sent_dir/$article.$lang >> $out_dir/nejm_valid.$lang
+
 	done
 done
 
@@ -89,3 +96,17 @@ done
 # 2. add OK at the end of each line
 # 3. add <=> between English and Chinese line numbers
 # 4. append lines to $out_dir/align_validation_zh_en.txt
+
+
+# Create validation set:
+python3 utils/gen_para_corp.py \
+	--align_fn ../processed_data/preprocess/alignment/align_validation_zh_en.txt \
+	--zh_fn ../processed_data/preprocess/alignment/nejm_valid.tok.zh \
+	--en_fn ../processed_data/preprocess/alignment/nejm_valid.tok.en \
+	--out_fn ../processed_data/preprocess/alignment/nejm_valid.parallel.tok
+
+python3 utils/gen_para_corp.py \
+	--align_fn ../processed_data/preprocess/alignment/align_validation_zh_en.txt \
+	--zh_fn ../processed_data/preprocess/alignment/nejm_valid.zh \
+	--en_fn ../processed_data/preprocess/alignment/nejm_valid.en \
+	--out_fn ../processed_data/preprocess/alignment/nejm_valid.parallel

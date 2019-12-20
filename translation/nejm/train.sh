@@ -8,8 +8,8 @@ DATA=../processed_data/alignment/moore/align/
 BPE_DIR=../processed_data/translation/wmt18/train_bpe/data/
 TRAIN_SRC=$DATA/nejm.zh
 TRAIN_TGT=$DATA/nejm.en
-VALID_SRC=../processed_data/preprocess/alignment/nejm_valid.parallel.zh
-VALID_TGT=../processed_data/preprocess/alignment/nejm_valid.parallel.en
+VALID_SRC=../processed_data/preprocess/alignment/nejm_valid.parallel.tok.zh
+VALID_TGT=../processed_data/preprocess/alignment/nejm_valid.parallel.tok.en
 # BPE_OPS=90000
 
 echo "Output dir = $OUT"

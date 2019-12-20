@@ -80,12 +80,6 @@ python3 evaluation/nejm/vis_pr.py
 # Use Moore's algorithm to align and create training set:
 bash alignment/moore/align.sh
 
-# Create validation set:
-python3 utils/gen_para_corp.py \
-	--align_fn ../processed_data/preprocess/alignment/align_validation_zh_en.txt \
-	--zh_fn ../processed_data/preprocess/alignment/nejm_valid.zh \
-	--en_fn ../processed_data/preprocess/alignment/nejm_valid.en \
-	--out_fn ../processed_data/preprocess/alignment/nejm_valid.parallel
 
 #########################
 # Crowdsource Alignment #
