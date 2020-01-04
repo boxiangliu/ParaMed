@@ -81,6 +81,13 @@ python3 evaluation/nejm/vis_pr.py
 bash alignment/moore/align.sh
 
 
+############
+# Clean up #
+############
+# Use bifixer to remove duplicate sentences:
+# Don't run (need docker container)
+bash clean/clean.sh 
+
 #########################
 # Crowdsource Alignment #
 #########################
