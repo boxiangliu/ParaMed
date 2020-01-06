@@ -71,24 +71,24 @@ python $ONMT/train.py \
 -batch_size 4000 \
 -batch_type tokens \
 -normalization tokens \
- -accum_count 2 \
- -optim adam \
- -adam_beta2 0.997 \
- -decay_method noam \
- -warmup_steps 10000 \
- -learning_rate 2 \
- -max_grad_norm 0 \
- -param_init 0  \
- -param_init_glorot \
- -label_smoothing 0.1 \
- -valid_steps 10000 \
- -save_checkpoint_steps 10000 \
- -gpu_ranks 0 1 2 3 4 5 6 7 \
- -world_size 8 \
- -master_port 10003 \
- -keep_checkpoint 10 \
- -train_from /mnt/home/baigong/scratch_SMT/seqtoseq/mymodels/zh2en/bpe/model_step_370000.pt \
- &> $OUT/models/zh2en.log
+-accum_count 2 \
+-optim adam \
+-adam_beta2 0.997 \
+-decay_method noam \
+-warmup_steps 10000 \
+-learning_rate 2 \
+-max_grad_norm 0 \
+-param_init 0  \
+-param_init_glorot \
+-label_smoothing 0.1 \
+-valid_steps 10000 \
+-save_checkpoint_steps 10000 \
+-gpu_ranks 0 1 2 3 4 5 6 7 \
+-world_size 8 \
+-master_port 10003 \
+-keep_checkpoint 10 \
+-train_from /mnt/home/baigong/scratch_SMT/seqtoseq/mymodels/zh2en/bpe/model_step_370000.pt \
+&> $OUT/models/zh2en.log
 
 
 # python $ONMT/train.py \
