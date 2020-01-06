@@ -24,10 +24,10 @@ for i in {0..1}; do
 	python $ONMT/translate.py \
 		-batch_size 1 \
 		-model $model \
-	    -src $src \
-	    -output $NEJM/test/$translation \
-	    -replace_unk -verbose \
-	    -gpu 0 > $NEJM/test/${translation}.log
+		-src $src \
+		-output $NEJM/test/$translation \
+		-replace_unk -verbose \
+		-gpu 0 > $NEJM/test/${translation}.log
 
 
 	echo "BPE decoding/detokenising target to match with references"
