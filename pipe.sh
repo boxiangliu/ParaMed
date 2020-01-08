@@ -103,11 +103,11 @@ python3 translation/wmt18/test.sh
 
 
 # Fine-tune on NEJM dataset:
-python3 translation/nejm/train.sh
+python3 translation/nejm/baigong/train.sh
 
 
 # Test on NEJM dataset:
-python3 translation/nejm/test.sh
+python3 translation/nejm/baigong/test.sh
 
 
 #################

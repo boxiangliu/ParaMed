@@ -7,7 +7,7 @@ OUT=../processed_data/translation/nejm/baigong/train/
 TRAIN_DATA=../processed_data/subset/subset/
 VALID_DATA=../processed_data/clean/
 BPE_DIR=/mnt/home/baigong/data/wmt18zh-en/org/
-
+python=/mnt/home/boxiang/software/anaconda2/envs/py3/bin/python
 
 for n in 4000 8000 16000 32000 64000 90861; do
 
@@ -31,7 +31,7 @@ $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe_dict.zh < $VALID_SRC > $OUT/data/$n/val
 $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe_dict.en < $TRAIN_TGT > $OUT/data/$n/train.$n.tgt
 $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe_dict.en < $VALID_TGT > $OUT/data/$n/valid.tgt
 
-#: <<EOF
+
 echo "Step 1b: Preprocess"
 # zh -> en
 python $ONMT/preprocess.py \
@@ -58,8 +58,9 @@ python $ONMT/preprocess.py \
 
 echo "Step 2: Train"
 
-sub TitanXx8 8 nejm_${n} \
-"$ONMT/train.py \
+# sub TitanXx8 8 nejm_${n} \
+$python restartsub.py TitanXx8 8 nejm_${n} \
+"$python $ONMT/train.py \
 -data $OUT/data/$n/zh2en/processed \
 -save_model $OUT/models/$n/zh2en \
 -layers 6 \
@@ -90,9 +91,11 @@ sub TitanXx8 8 nejm_${n} \
 -save_checkpoint_steps 5000 \
 -gpu_ranks 0 1 2 3 4 5 6 7 \
 -world_size 8 \
--master_port 10003 \
--train_from /mnt/home/baigong/scratch_SMT/seqtoseq/mymodels/zh2en/bpe/model_step_370000.pt" \
-$OUT/models/$n/zh2en.log
+-master_port 10003" | \
+tee $OUT/models/$n/zh2en_restartsub.log & 
+# \
+# -train_from /mnt/home/baigong/scratch_SMT/seqtoseq/mymodels/zh2en/bpe/model_step_370000.pt" \
+# $OUT/models/$n/zh2en.log
 
 
 # python $ONMT/train.py \
