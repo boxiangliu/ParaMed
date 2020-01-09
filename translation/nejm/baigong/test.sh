@@ -7,17 +7,24 @@ moses_scripts=~/software/mosesdecoder/scripts/
 
 # detokenize 
 models=($WMT18/zh2en/bpe/model_step_370000.pt \
-	$NEJM/models/zh2en_step_480000.bak.pt)
-srcs=($NEJM/data/valid.src \
-	$NEJM/data/valid.src)
-tgts=($VALID/nejm.valid.en \
-	$VALID/nejm.valid.en)
-translations=(wmt18.zh2en nejm.zh2en)
+	$NEJM/models/4000/zh2en_step_380000.pt \
+	$NEJM/models/8000/zh2en_step_380000.pt \
+	$NEJM/models/16000/zh2en_step_380000.pt \
+	$NEJM/models/32000/zh2en_step_380000.pt \
+	$NEJM/models/64000/zh2en_step_380000.pt \
+	$NEJM/models/90861/zh2en_step_380000.pt)
+src=$NEJM/data/valid.src
+tgt=$VALID/nejm.valid.en
+translations=(wmt18.zh2en \
+	nejm.4000.zh2en \
+	nejm.8000.zh2en \
+	nejm.16000.zh2en \
+	nejm.32000.zh2en \
+	nejm.64000.zh2en \
+	nejm.90861.zh2en)
 
-for i in {0..1}; do
+for i in {0..6}; do
 	model=${models[$i]}
-	src=${srcs[$i]}
-	tgt=${tgts[$i]}
 	translation=${translations[$i]}
 
 	echo "Translate $translation"
