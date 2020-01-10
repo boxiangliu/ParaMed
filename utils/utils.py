@@ -85,6 +85,11 @@ class Container(dict):
 	def read_from_disk(self, root_dir):
 
 		self.clear()
+		print("\n")
+		print("################################")
+		print("#### Reading existing files ####")
+		print("################################")
+
 		years = glob.glob(root_dir + "*")
 		years = [os.path.basename(x) for x in years]
 
@@ -118,8 +123,13 @@ class Container(dict):
 
 	def traverse(self, driver, out_dir):
 
+		print("\n")
+		print("#################################")
+		print("#### Traversing NEJM website ####")
+		print("#################################")
+
 		years = get_years(driver)
-		print("Found the following years:")
+		print(f"Found a total of {len(years)} years:")
 		for year in years:
 			print(year)
 
@@ -137,7 +147,7 @@ class Container(dict):
 			driver.get(year_url)
 			
 			months = get_months(driver, year_url)
-			print("Found the following months:")
+			print(f"Found a total of {len(months)} months:")
 			for month in months:
 				print(month)
 
@@ -155,6 +165,9 @@ class Container(dict):
 							  "div[@class='weeklycover_box']"\
 							  "//div[@class='box_70c']//a"
 				articles = driver.find_elements_by_xpath(xpath_query)
+				print(f"Found a total of {len(articles)} articles:")
+				for article in articles:
+					print(article.text)
 
 				fn = "{}.txt".format(os.path.join(out_dir, year, month))
 				with open(fn, "a+") as f:
@@ -173,6 +186,7 @@ class Container(dict):
 								"", article_id) # Remove the yxqy prefix
 
 							if article_id in self[year][month]:
+								print(f"# Warning: Article already stored. Skip.")
 								continue # Avoid repeating work
 
 							article_driver.get(zh_url)
