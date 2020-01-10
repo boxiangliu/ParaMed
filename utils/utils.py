@@ -1,10 +1,22 @@
 import re
 import os
 import glob
+import time
 from collections import defaultdict, Counter
 from dateutil import parser
 import pandas as pd
 from nltk.tokenize.punkt import PunktSentenceTokenizer, PunktTrainer
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+
+chrome_options = Options()
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-gpu")
+# chrome_options.add_argument("--remote-debugging-port=9222")
 
 def get_years(driver):
 	elements = driver.find_elements_by_class_name("field_video_a")
@@ -25,8 +37,9 @@ def get_months(driver, year_url):
 	for elem in elements:
 		hyperlink = elem.get_attribute("href")
 		hyperlink = hyperlink.replace(year_url, "")
-		if elem.text != "":
-			months[elem.text] = hyperlink
+		month = elem.text.replace("月","")
+		if month != "":
+			months[month] = hyperlink
 
 	return months
 
@@ -38,7 +51,33 @@ def get_url_to_english_page(driver):
 	except:
 		url = None
 
-	return url	
+	return url
+
+
+def get_english_title(article_driver, article_id):
+
+	if "jw" in article_id: # journal watch articles
+		class_ = "page-title"
+	else:
+		class_ = "title_default"
+
+	timeout = 60
+	en_title = ""
+	try:
+		WebDriverWait(article_driver, timeout).\
+			until(EC.presence_of_element_located(
+				(By.CLASS_NAME, class_)))
+
+		while en_title == "":
+			time.sleep(0.2)
+			en_title = article_driver.\
+				find_element_by_class_name(class_).text
+
+	except:
+		print("Timeout!")
+		en_title = ""
+	
+	return en_title
 
 
 class Container(dict):
@@ -66,10 +105,15 @@ class Container(dict):
 				with open(fn, "r") as f:
 					for line in f:
 						split_line = line.split("\t")
-						title = split_line[0].strip()
-						zh_url = split_line[1].strip()
-						en_url = split_line[2].strip()
-						self[year][month][title] = (zh_url, en_url)
+						year = split_line[0].strip()
+						month = split_line[1].strip()
+						article_id = split_line[2].strip()
+						zh_title = split_line[3].strip()
+						en_title = split_line[4].strip()
+						zh_url = split_line[5].strip()
+						en_url = split_line[6].strip()
+						self[year][month][article_id] = \
+							(zh_title, en_title, zh_url, en_url)
 
 
 	def traverse(self, driver, out_dir):
@@ -78,6 +122,9 @@ class Container(dict):
 		print("Found the following years:")
 		for year in years:
 			print(year)
+
+		article_driver = webdriver.\
+			Chrome(options=chrome_options)
 
 		for year, year_url in years.items():
 
@@ -103,34 +150,50 @@ class Container(dict):
 				xpath_query = "//a[@href='{}']".format(month_href)
 				month_element = driver.find_element_by_xpath(xpath_query)
 				month_element.click() # redirect driver to that month.
-				xpath_query = "//div[@class='weeklycover_box']" \
-							  "/div[@class='box_70c']//a"
+				month_id = month_href.replace("#","") # The id and href is off by a # sign.
+				xpath_query = f"//div[@id='{month_id}']//"\
+							  "div[@class='weeklycover_box']"\
+							  "//div[@class='box_70c']//a"
 				articles = driver.find_elements_by_xpath(xpath_query)
 
 				fn = "{}.txt".format(os.path.join(out_dir, year, month))
 				with open(fn, "a+") as f:
 					for art in articles:
-						text = art.text
+						zh_title = art.text.replace("•","").strip()
 
-						# Check if article already in self. 
-						if text in self[year][month]:
-							print("{} already in self.".format(text))
+						if "Vol." in zh_title and "No." in zh_title:
+							print("{} is the TOC. Skip.".format(zh_title))
 						
-						elif "Vol." in text and "No." in text:
-							print("{} is the TOC".format(text))
-						
-						elif text != "" and text != "\ue735":
-							print("Article: {}".format(text))
+						elif zh_title != "" and zh_title != "\ue735":
+							print("Article: {}".format(zh_title))
 							zh_url = art.get_attribute("href")
-							article_driver = webdriver.Chrome()
-							article_driver.get(zh_url)
 
-							en_url = get_url_to_english_page(article_driver)
-							article_driver.close()
-							if en_url is not None:
-								self[year][month][text] = (zh_url, en_url)
-								f.write("\t".join([text, zh_url, en_url]) + "\n")
-								f.flush()
+							article_id = zh_url.split("/")[-1]
+							article_id = re.sub("[yY][xX][qQ][yY]-*",\
+								"", article_id) # Remove the yxqy prefix
+
+							if article_id in self[year][month]:
+								continue # Avoid repeating work
+
+							article_driver.get(zh_url)
+							en_url = get_url_to_english_page(article_driver).\
+								split("?")[0] # Remove unnecessary suffix
+							article_driver.get(en_url)
+							en_title = get_english_title(
+								article_driver, article_id)
+
+							self[year][month][article_id] = \
+								(zh_title, en_title, zh_url, en_url)
+
+							if en_title != "":
+								f.write("\t".join([year, month, article_id, \
+									zh_title, en_title, zh_url, en_url]) + "\n")
+							else:
+								f.write("\t".join([year, month, article_id, \
+									zh_title, "MISSING", zh_url, en_url]) + "\n")
+							f.flush()
+
+		article_driver.close()
 
 
 	def write_to_disk(self, out_dir):
