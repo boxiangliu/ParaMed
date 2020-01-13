@@ -1,3 +1,4 @@
+import sys
 import re
 import os
 import glob
@@ -13,6 +14,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
+sys.path.append(".")
 from utils.utils import Container
 
 
@@ -324,10 +326,10 @@ def crawl_all_urls(container):
 						print_and_log("Unknown article type.")
 
 					else:
-						crawl_zh_page(driver, zh_out)			
+						crawl_zh_page(driver, zh_out)
 						driver.get(en_url)
 
-					 	if _type == "nejm":
+						if _type == "nejm":
 							crawl_en_nejm(driver, en_out)
 
 						elif _type == "journal_watch":
@@ -339,30 +341,26 @@ def crawl_all_urls(container):
 def main():
 
 	# Initialize Chrome driver:
-	driver = webdriver.Chrome()
+	chrome_options = Options()
+	chrome_options.add_argument("--no-sandbox")
+	# chrome_options.add_argument("--headless")
+	chrome_options.add_argument("--disable-gpu")
+	chrome_options.add_argument("--remote-debugging-port=9222")
+	driver = webdriver.Chrome(options=chrome_options)
 	driver.get(main_url)
 	login(driver)
-
-	# Uncomment the following lines if using Chrome in headless mode. 
-	# chrome_options = Options()
-	# chrome_options.add_argument("--no-sandbox")
-	# chrome_options.add_argument("--headless")
-	# chrome_options.add_argument("--disable-gpu")
-	# chrome_options.add_argument("--remote-debugging-port=9222")
-	# driver = webdriver.Chrome(options=chrome_options)
 
 	# Initialize container:
 	container = Container()
 	container.read_from_disk(out_dir)
 
 	# Uncomment the following lines if re-traversing the NEJM website.
-	# container.traverse(driver, out_dir)
-	# container.write_to_disk(out_dir)
+	container.traverse(driver, out_dir)
 
 	# Logging:
-	log_fn = "{}/article.log".format(article_dir)
-	logging.basicConfig(filename=log_fn, format="%(message)s")
-	crawl_all_urls(container)
+	# log_fn = "{}/article.log".format(article_dir)
+	# logging.basicConfig(filename=log_fn, format="%(message)s")
+	# crawl_all_urls(container)
 
 
 if __name__ == "__main__":
