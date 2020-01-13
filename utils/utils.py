@@ -160,6 +160,7 @@ class Container(dict):
 				xpath_query = "//a[@href='{}']".format(month_href)
 				month_element = driver.find_element_by_xpath(xpath_query)
 				month_element.click() # redirect driver to that month.
+				time.sleep(0.5)
 				month_id = month_href.replace("#","") # The id and href is off by a # sign.
 				xpath_query = f"//div[@id='{month_id}']//"\
 							  "div[@class='weeklycover_box']"\
@@ -178,16 +179,17 @@ class Container(dict):
 							print("{} is the TOC. Skip.".format(zh_title))
 						
 						elif zh_title != "" and zh_title != "\ue735":
-							print("Article: {}".format(zh_title))
 							zh_url = art.get_attribute("href")
 
-							article_id = zh_url.split("/")[-1]
-							article_id = re.sub("[yY][xX][qQ][yY]-*",\
-								"", article_id) # Remove the yxqy prefix
-
+							article_id = zh_url.split("/")[-1].lower()
+							article_id = re.sub("yxqy-*","", article_id).\
+								replace("nejm", "").\
+								replace(",", ".") # Normalize IDs. 
 							if article_id in self[year][month]:
-								print(f"# Warning: Article already stored. Skip.")
+								print(f"Article {zh_title} already stored. Skip.")
 								continue # Avoid repeating work
+							else:
+								print(f"Getting article: {zh_title}.")
 
 							article_driver.get(zh_url)
 							en_url = get_url_to_english_page(article_driver).\
