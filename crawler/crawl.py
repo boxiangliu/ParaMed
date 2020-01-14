@@ -80,7 +80,7 @@ def start_crawling(element):
 	return crawl
 
 
-def unwanted(x):
+def zh_unwanted(x):
 	if re.match("表[0-9]{1,2}\.", x) or \
 		re.match("图[0-9]{1,2}\.", x) or \
 		x.startswith("译者：") or \
@@ -104,8 +104,8 @@ def crawl_zh_page(driver, article_id, zh_url, out_prefix, verbose=False):
 	titles = full_article.find_elements_by_class_name("font-size-title")
 	title_text = [x.text.strip() for x in titles]
 
-	content_filtered = [x for x in filter(unwanted, content_text)]
-	title_filtered = [x for x in filter(unwanted, title_text)]
+	content_filtered = [x for x in filter(zh_unwanted, content_text)]
+	title_filtered = [x for x in filter(zh_unwanted, title_text)]
 
 	title_content_set = set(content_filtered + title_filtered)
 	filtered_text = [x for x in full_text if x in title_content_set]
@@ -175,38 +175,69 @@ def detect_paywall(driver):
 		return False
 
 
-def crawl_en_nejm(driver, output, verbose=False):
-	
-	print_and_log("Crawling English page.")
-	crawl = False
+def en_unwanted(x):
+	if x.text == "" or \
+		x.get_attribute("class") == "m-media-item" or \
+		x.text == "Author Affiliations" or \
+		x.text == "Supplementary Material" or \
+		re.match("References \([0-9]+\)", x.text) or \
+		re.match("Citing Articles \([0-9]+\)", x.text) or \
+		x.text == "Letters":
+		return False
+	else:
+		return True
 
+
+def remove_text_after_disclosure(l):
+	index = len(l)
+	for i, x in enumerate(l):
+		if re.match("Disclosure", x):
+			index = i
+	return l[:index]
+
+
+def crawl_en_page(driver, article_id, en_url, out_prefix, verbose=False):
+	driver.get(en_url)
 	if detect_dialog_window(driver):
 		close_dialog_window(driver)
 
 	if detect_paywall(driver):
 		raise RuntimeError("Paywall detected.")
 
-	xpath_query = "//div[@class='m-inline-tabs__tab s-active']"
-	body = driver.find_element_by_xpath(xpath_query)
+	print_and_log(f"Crawling English article: {article_id}.")
+	article_type = re.sub("[0-9]+", "", article_id)
+	print_and_log(f"Article type: {article_type}.")
 
-	xpath_query = "//*[self::h2 or self::h3 or self::p]"
-	elements = body.find_elements_by_xpath(xpath_query)
+	if article_type != "jw.na":
+		full_article = driver.find_element_by_id("full")
+		full_text = [x.strip() for x in full_article.text.split("\n")]
 
-	with open(output, "w") as f:	
+		paragraph = full_article.find_elements_by_tag_name("p")
+		h2 = full_article.find_elements_by_tag_name("h2")
+		h3 = full_article.find_elements_by_tag_name("h3")
 
-		for i, elem in enumerate(elements):
+		paragraph_filtered = [x.text for x in filter(en_unwanted, paragraph)]
+		h2_filtered = [x.text for x in filter(en_unwanted, h2)]
+		h3_filtered = [x.text for x in filter(en_unwanted, h3)]
 
-			if stop_crawling(elem):
-				message = "Stopped crawling at paragraph {}.".format(i)
-				print_and_log(message)
-				return 
+		paragraph_h2_h3_set = set(paragraph_filtered + h2_filtered + h3_filtered)
+		filtered_text = [x for x in full_text if x in paragraph_h2_h3_set]
+		filtered_text = remove_text_after_disclosure(filtered_text)
+	else:
+		pass # Put Journal Watch code here:
 
-			if verbose: 
-				print("Parsing paragraph {}".format(i), flush=True)
-				
-			if to_include(elem):
-				f.write(elem.text)
-				f.write("\n")
+	with open(f"{out_prefix}.full.en", "w") as f:
+		for i in full_text:
+			f.write(i + "\n")
+
+	with open(f"{out_prefix}.filt.en", "w") as f:
+		for i in filtered_text:
+			f.write(i + "\n")
+
+en_url = "http://www.nejm.org/doi/full/10.1056/NEJMoa1602074"
+article_id = "oa1602074"
+out_prefix = "test"
+crawl_en_page(driver, article_id, en_url, out_prefix)
 
 
 def crawl_en_journal_watch(driver, output, timeout=60, verbose=False):
