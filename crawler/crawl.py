@@ -119,7 +119,7 @@ def crawl_zh_page(driver, article_id, zh_url, out_prefix, verbose=False):
 			f.write(i + "\n")
 
 
-def login(driver):
+def yxqy_login(driver):
 
 	try:
 		xpath_query = "//a[@href='javascript:;' and @class='dropdown-toggle']"
@@ -139,9 +139,25 @@ def login(driver):
 		sleep(2)
 
 	except:
-		print("Already logged in!")
+		print("Already logged in to YXQY!")
 		logged_in = True
 
+
+def jw_login(driver):
+	try:
+		email = driver.find_element_by_xpath("//article-page//input[@id='email_text']")
+		email.clear()
+		email.send_keys("bliuforgit@gmail.com")
+		password = driver.find_element_by_xpath("//article-page//input[@id='pwd_text']")
+		password.clear()
+		password.send_keys("password")
+		login = driver.find_element_by_xpath("//article-page//button")
+		login.click()
+		sleep(3)
+
+	except:
+		print("Already logged into Journal Watch!")
+		logged_in = True
 
 def print_and_log(message):
 	print(message, flush=True)
@@ -224,6 +240,7 @@ def crawl_en_page(driver, article_id, en_url, out_prefix, verbose=False):
 		filtered_text = [x for x in full_text if x in paragraph_h2_h3_set]
 		filtered_text = remove_text_after_disclosure(filtered_text)
 	else:
+		jw_login(driver)
 		pass # Put Journal Watch code here:
 
 	with open(f"{out_prefix}.full.en", "w") as f:
@@ -369,8 +386,9 @@ def main():
 	# chrome_options.add_argument("--disable-gpu")
 	# chrome_options.add_argument("--remote-debugging-port=9222")
 	driver = webdriver.Chrome(options=chrome_options)
+	
 	driver.get(main_url)
-	login(driver)
+	yxqy_login(driver)
 
 	# Initialize container:
 	container = Container()
