@@ -22,6 +22,9 @@ from utils.utils import Container
 main_url = "https://www.nejmqianyan.cn/index.php?c=week&m=year"
 out_dir = "../processed_data/crawler/nejm/urls/"
 article_dir = "../processed_data/crawler/nejm/articles/"
+
+traverse = False # Whether to get the article urls.
+crawl = True # Whether to get the article content.
 os.makedirs(out_dir, exist_ok=True)
 os.makedirs(article_dir, exist_ok=True)
 
@@ -77,29 +80,44 @@ def start_crawling(element):
 	return crawl
 
 
-def crawl_zh_page(driver, output, verbose=False):
+def unwanted(x):
+	if re.match("表[0-9]{1,2}\.", x) or \
+		re.match("图[0-9]{1,2}\.", x) or \
+		x.startswith("译者：") or \
+		x.startswith("校对：") or \
+		x.startswith("统计学校对：") or x == "":
+		return False
+	else:
+		return True
 
-	print_and_log("Crawling Chinese website.")
-	paragraphs = driver.find_elements_by_tag_name("p")
 
-	with open(output, "w") as f:	
+def crawl_zh_page(driver, article_id, zh_url, out_prefix, verbose=False):
+	driver.get(zh_url)
+	print_and_log(f"Crawling Chinese article: {article_id}.")
 
-		for i, para in enumerate(paragraphs):
-			if verbose: 
-				print("Parsing paragraph {}".format(i), flush=True)
+	full_article = driver.find_element_by_id("nejm-article-content")
+	full_text = [x.strip() for x in full_article.text.split("\n")]
 
-			spans = para.find_elements_by_tag_name("span")
+	contents = full_article.find_elements_by_class_name("font-size-content")
+	content_text = [x.text.strip() for x in contents]
 
-			for span in spans:
+	titles = full_article.find_elements_by_class_name("font-size-title")
+	title_text = [x.text.strip() for x in titles]
 
-				if stop_crawling(span):
-					print("Stopped crawling at paragraph {}.".format(i))
-					return
+	content_filtered = [x for x in filter(unwanted, content_text)]
+	title_filtered = [x for x in filter(unwanted, title_text)]
 
-				if to_include(span):
-					f.write(span.text)
+	title_content_set = set(content_filtered + title_filtered)
+	filtered_text = [x for x in full_text if x in title_content_set]
 
-			f.write("\n")
+	with open(f"{out_prefix}.full.zh", "w") as f:
+		for i in full_text:
+			f.write(i + "\n")
+
+	with open(f"{out_prefix}.filt.zh", "w") as f:
+		for i in filtered_text:
+			f.write(i + "\n")
+
 
 def login(driver):
 
@@ -118,32 +136,12 @@ def login(driver):
 		login = driver.find_element_by_class_name(\
 			"btn.btn-default.fastLoginBtn.login-top")
 		login.click()
+		sleep(2)
 
 	except:
 		print("Already logged in!")
 		logged_in = True
 
-
-def get_zh_article_type(driver):
-	journal_watch_icon = "https://nejmqianyan.cn/data/upload/20160929/1475128688604994.png"
-	nejm_icon = "https://nejmqianyan.cn/data/upload/20160929/1475128654268409.png"
-
-	xpath_query = "//img[@class='article_type_icon']"
-	try:
-		element = driver.find_element_by_xpath(xpath_query)
-		link = element.get_attribute("src")
-	except:
-		link = ""
-
-	if link == journal_watch_icon:
-		_type = "journal_watch"
-	elif link == nejm_icon:
-		_type = "nejm"
-	else:
-		_type = "misc"
-
-	return(_type)
-	
 
 def print_and_log(message):
 	print(message, flush=True)
@@ -276,31 +274,28 @@ def crawl_all_urls(container):
 	for year, month_dict in container.items():
 		
 		print_and_log("#############")
-		print_and_log("# Year {} #".format(year))
+		print_and_log(f"# Year {year} #")
 		print_and_log("#############")
 
 		for month, article_dict in month_dict.items():
 			os.makedirs(os.path.join(article_dir, year, month), exist_ok=True)
 
-			message = "# Crawling {}/{} #".format(year, month)
 			print_and_log("######################")
-			print_and_log(message)
+			print_and_log(f"# Crawling {year}/{month} #")
 			print_and_log("######################")
 
-			for article, urls in article_dict.items():
+			for article_id, (zh_title, en_title, zh_url, en_url) in article_dict.items():
 
 				if n % 100 == 0:
-					message = "### Progress: {}/{} Articles ###".format(n, total)
+					message = f"### Progress: {n}/{total} Articles ###"
 					print_and_log(message)
 
-				article = article.replace("/","-").replace(" ", "").replace("•", "")
-				message = "Article: {}".format(article)
+				message = f"Article: {zh_title}/{en_title}"
 				print_and_log(message)
 
-				zh_out = "{}/{}/{}/{}.zh".format(
-					article_dir, year, month, article)
-				en_out = "{}/{}/{}/{}.en".format(
-					article_dir, year, month, article)
+				out_prefix = f"{article_dir}/{year}/{month}/{article_id}"
+				zh_out = out_prefix + ".zh"
+				en_out = out_prefix + ".en"
 
 				to_run = True
 				if os.path.exists(zh_out) and os.path.exists(en_out):
@@ -318,22 +313,18 @@ def crawl_all_urls(container):
 						print_and_log("zh and en articles differ - rerunning.")
 
 				if to_run:
-					zh_url, en_url = urls
-				
-					driver.get(zh_url)
-					_type = get_zh_article_type(driver)
-					if _type == "misc":
-						print_and_log("Unknown article type.")
+					
+					# Crawl Chinese article:
+					crawl_zh_page(driver, article_id, zh_url, out_prefix)
 
-					else:
-						crawl_zh_page(driver, zh_out)
-						driver.get(en_url)
+					# Crawl English article:
+					driver.get(en_url)
+					_type = "journal_watch" if "jw" in article_id else "nejm"
+					if _type == "nejm":
+						crawl_en_nejm(driver, en_out)
 
-						if _type == "nejm":
-							crawl_en_nejm(driver, en_out)
-
-						elif _type == "journal_watch":
-							crawl_en_journal_watch(driver, en_out)
+					elif _type == "journal_watch":
+						crawl_en_journal_watch(driver, en_out)
 					
 				n += 1
 
@@ -342,10 +333,10 @@ def main():
 
 	# Initialize Chrome driver:
 	chrome_options = Options()
-	chrome_options.add_argument("--no-sandbox")
+	# chrome_options.add_argument("--no-sandbox")
 	# chrome_options.add_argument("--headless")
-	chrome_options.add_argument("--disable-gpu")
-	chrome_options.add_argument("--remote-debugging-port=9222")
+	# chrome_options.add_argument("--disable-gpu")
+	# chrome_options.add_argument("--remote-debugging-port=9222")
 	driver = webdriver.Chrome(options=chrome_options)
 	driver.get(main_url)
 	login(driver)
@@ -355,12 +346,14 @@ def main():
 	container.read_from_disk(out_dir)
 
 	# Uncomment the following lines if re-traversing the NEJM website.
-	container.traverse(driver, out_dir)
+	if traverse:
+		container.traverse(driver, out_dir)
 
 	# Logging:
-	# log_fn = "{}/article.log".format(article_dir)
-	# logging.basicConfig(filename=log_fn, format="%(message)s")
-	# crawl_all_urls(container)
+	if crawl:
+		log_fn = "{}/article.log".format(article_dir)
+		logging.basicConfig(filename=log_fn, format="%(message)s")
+		crawl_all_urls(container)
 
 
 if __name__ == "__main__":
