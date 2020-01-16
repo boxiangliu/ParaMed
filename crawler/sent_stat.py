@@ -1,14 +1,18 @@
 import os
 import re
 import glob
+import sys
 import pandas as pd
 pd.set_option('display.max_columns', 999)
 import matplotlib
 import matplotlib.pyplot as plt
 
+sys.path.append(".")
+from utils.utils import read_article_urls
 in_dir = "../processed_data/crawler/nejm/urls/"
-out_dir = "../processed_data/crawler/stat/"
+out_dir = "../processed_data/crawler/sent_stat/"
 os.makedirs(out_dir, exist_ok=True)
+
 
 abbrev = {"cp": "Clinical Practice",
 		"oa": "Original Article",
@@ -29,22 +33,11 @@ abbrev = {"cp": "Clinical Practice",
 		"x": "Correction",
 		"hpr": "Health Policy Report"}
 
-# Read article and urls:
-container = []
-article_files = glob.glob(f"{in_dir}/*/*.txt")
-for fn in article_files:
-	print(f"Filename: {fn}")
-	container.append(pd.read_table(fn, header=None))
-articles = pd.concat(container)
-articles.columns = ["year", "month", \
-	"id", "zh_title", "en_title", \
-	"zh_url", "en_url"]
-articles = articles[articles["year"] != 2020] # Remove year 2020
-print(f"Total number of articles: {articles.shape[0]}")
 
-# Check all articles are unique:
-assert articles["id"].unique().shape[0] == articles.shape[0],
-	"Duplicate articles exists."
+# Read article and urls:
+articles = read_article_urls(in_dir)
+articles = articles[articles["year"] != 2020] # Remove year 2020
+
 
 # Plot article count by year:
 year_count = articles.groupby("year").\
