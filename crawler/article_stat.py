@@ -45,12 +45,16 @@ container = defaultdict(lambda: \
 	"en": {"text": None, "len": None},
 	"zh_m_en": None})
 
+
 for index, row in article_urls.iterrows():
 	for lang in ["zh", "en"]:
 		year = row["year"]
 		month = row["month"]
 		article_id = row["id"]
-		fn = f"{in_dir}/{year}/{month:02}/{article_id}.filt.{lang}"
+		if lang == "zh":
+			fn = f"{in_dir}/{year}/{month:02}/{article_id}.pp.{lang}"
+		else:
+			fn = f"{in_dir}/{year}/{month:02}/{article_id}.full.{lang}"
 		print(f"path: {fn}")
 
 		try:
@@ -79,58 +83,10 @@ article_stat = pd.concat(article_stat)
 article_stat["pct"] = article_stat.apply(lambda x: \
 	2 * 100 * x["zh_m_en"] / (x["zh_len"] + x["en_len"]), axis=1)
 article_stat["pct"].hist()
+article_stat.sort_values("pct").tail(30).head(24)
+article_stat[article_stat["id"].apply(lambda x: not x.startswith("oa") and not x.startswith("jw.na"))].sort_values("pct")
+article_stat[article_stat["id"].apply(lambda x: x.startswith("oa"))]
 
-
-article_stat.sort_values("pct")
-year, month = container["cibr1716789"]["time"]
-article_urls[article_urls["id"] == "cibr1716789"]
-article_urls[article_urls["id"] == "cibr1716789"]["en_url"].item()
-
-
-for index, row in article_urls.iterrows():
-	for lang in ["zh", "en"]:
-		year = row["year"]
-		month = row["month"]
-		article_id = row["id"]
-		fn = f"{in_dir}/{year}/{month:02}/{article_id}.full.{lang}"
-		print(f"path: {fn}")
-
-		try:
-			with open(fn, "r") as f: text = f.readlines()
-			length = len(text)
-			container[article_id]["time"] = (int(year),int(month))
-			container[article_id][lang]["text"] = text
-			container[article_id][lang]["len"] = length
-
-			if container[article_id]["zh"]["len"] != None and \
-				container[article_id]["en"]["len"] != None:
-				container[article_id]["zh_m_en"] = \
-					container[article_id]["zh"]["len"] - \
-					container[article_id]["en"]["len"]
-		except:
-			print(f"{fn} does not exist!")
-
-
-article_stat = []
-for i, (k, v) in enumerate(container.items()):
-	article_stat.append(pd.DataFrame({"id": k, "year": \
-		v["time"][0], "month": v["time"][1], \
-		"zh_len": v["zh"]["len"], "en_len": v["en"]["len"], \
-		"zh_m_en": v["zh_m_en"]}, index=[i]))
-article_stat = pd.concat(article_stat)
-article_stat["pct"] = article_stat.apply(lambda x: \
-	2 * 100 * x["zh_m_en"] / (x["zh_len"] + x["en_len"]), axis=1)
-article_stat["pct"].hist()
-article_stat.sort_values("pct")
-
-article_urls[article_urls["id"] == "x180026"]
-container["x180026"]
-
-article_urls[article_urls["id"] == "ra1510092"]
-container["ra1510092"]
-
-article_urls[article_urls["id"] == "e1614121"]
-container["e1614121"]
-
-article_urls[article_urls["id"] == "p1806934"]
-container["p1806934"]
+article_id = "oa1212914"
+container[article_id]
+article_urls[article_urls["id"]==article_id]
