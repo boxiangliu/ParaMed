@@ -52,7 +52,7 @@ for index, row in article_urls.iterrows():
 		month = row["month"]
 		article_id = row["id"]
 		if lang == "zh":
-			fn = f"{in_dir}/{year}/{month:02}/{article_id}.pp.{lang}"
+			fn = f"{in_dir}/{year}/{month:02}/{article_id}.full.{lang}"
 		else:
 			fn = f"{in_dir}/{year}/{month:02}/{article_id}.full.{lang}"
 		print(f"path: {fn}")
@@ -84,9 +84,10 @@ article_stat["pct"] = article_stat.apply(lambda x: \
 	2 * 100 * x["zh_m_en"] / (x["zh_len"] + x["en_len"]), axis=1)
 article_stat["pct"].hist()
 article_stat.sort_values("pct").tail(30).head(24)
-article_stat[article_stat["id"].apply(lambda x: not x.startswith("oa") and not x.startswith("jw.na"))].sort_values("pct")
-article_stat[article_stat["id"].apply(lambda x: x.startswith("oa"))]
+article_stat[article_stat["id"].apply(lambda x: x.startswith("cp") and not x.startswith("cpc") and not x.startswith("cps"))]
 
-article_id = "oa1212914"
-container[article_id]
+article_id = "cp1210379"
+container[article_id]["en"]["text"][:20]
+container[article_id]["zh"]["text"][:20]
 article_urls[article_urls["id"]==article_id]
+article_urls[article_urls["id"]==article_id]["en_url"].item()
