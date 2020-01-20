@@ -51,10 +51,7 @@ for index, row in article_urls.iterrows():
 		year = row["year"]
 		month = row["month"]
 		article_id = row["id"]
-		if lang == "zh":
-			fn = f"{in_dir}/{year}/{month:02}/{article_id}.full.{lang}"
-		else:
-			fn = f"{in_dir}/{year}/{month:02}/{article_id}.full.{lang}"
+		fn = f"{in_dir}/{year}/{month:02}/{article_id}.pp2.{lang}"
 		print(f"path: {fn}")
 
 		try:
@@ -80,14 +77,26 @@ for i, (k, v) in enumerate(container.items()):
 		"zh_len": v["zh"]["len"], "en_len": v["en"]["len"], \
 		"zh_m_en": v["zh_m_en"]}, index=[i]))
 article_stat = pd.concat(article_stat)
-article_stat["pct"] = article_stat.apply(lambda x: \
-	2 * 100 * x["zh_m_en"] / (x["zh_len"] + x["en_len"]), axis=1)
-article_stat["pct"].hist()
-article_stat.sort_values("pct").tail(30).head(24)
-article_stat[article_stat["id"].apply(lambda x: x.startswith("cp") and not x.startswith("cpc") and not x.startswith("cps"))]
+article_stat["type"] = article_stat["id"].apply(lambda x: re.sub("[0-9%]+", "", x))
 
-article_id = "cp1210379"
-container[article_id]["en"]["text"][:20]
-container[article_id]["zh"]["text"][:20]
-article_urls[article_urls["id"]==article_id]
-article_urls[article_urls["id"]==article_id]["en_url"].item()
+# article_stat["pct"] = article_stat.apply(lambda x: \
+	# 2 * 100 * x["zh_m_en"] / (x["zh_len"] + x["en_len"]), axis=1)
+# article_stat["zh_m_en"].hist()
+# article_stat.sort_values("pct").tail(30).head(24)
+# article_stat[article_stat["id"].apply(lambda x: x.startswith("cp") and not x.startswith("cpc") and not x.startswith("cps"))]
+
+# article_id = "cp1210379"
+# container[article_id]["en"]["text"][:20]
+# container[article_id]["zh"]["text"][:20]
+# article_urls[article_urls["id"]==article_id]
+# article_urls[article_urls["id"]==article_id]["en_url"].item()
+
+plt.figure()
+article_stat[article_stat["type"] == "clde"]
+article_stat[article_stat["type"] == "clde"]["zh_m_en"].hist()
+article_stat[article_stat["type"] == "cp"].sort_values("zh_m_en")
+
+
+plt.figure()
+article_stat["zh_m_en"].hist()
+article_stat.sort_values("zh_m_en")
