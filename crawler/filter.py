@@ -240,7 +240,7 @@ def main():
 			article = stitch(article, lang)
 			article = filter(article, article_type, lang)
 
-			out_fn = in_fn.replace(".full.", ".pp2.")
+			out_fn = in_fn.replace(".full.", ".filt.")
 			with open(out_fn, "w") as f: 
 				for line in article:
 					f.write(line + "\n")

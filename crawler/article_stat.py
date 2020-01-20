@@ -51,7 +51,7 @@ for index, row in article_urls.iterrows():
 		year = row["year"]
 		month = row["month"]
 		article_id = row["id"]
-		fn = f"{in_dir}/{year}/{month:02}/{article_id}.pp2.{lang}"
+		fn = f"{in_dir}/{year}/{month:02}/{article_id}.filt.{lang}"
 		print(f"path: {fn}")
 
 		try:
@@ -91,10 +91,10 @@ article_stat["type"] = article_stat["id"].apply(lambda x: re.sub("[0-9%]+", "", 
 # article_urls[article_urls["id"]==article_id]
 # article_urls[article_urls["id"]==article_id]["en_url"].item()
 
-plt.figure()
-article_stat[article_stat["type"] == "clde"]
-article_stat[article_stat["type"] == "clde"]["zh_m_en"].hist()
-article_stat[article_stat["type"] == "cp"].sort_values("zh_m_en")
+# plt.figure()
+# article_stat[article_stat["type"] == "clde"]
+# article_stat[article_stat["type"] == "clde"]["zh_m_en"].hist()
+# article_stat[article_stat["type"] == "cp"].sort_values("zh_m_en")
 
 
 plt.figure()
