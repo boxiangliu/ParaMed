@@ -11,7 +11,7 @@ sys.path.append(".")
 from utils.utils import read_article_urls
 
 in_dir = "../processed_data/crawler/nejm/urls/"
-out_dir = "../processed_data/crawler/sent_stat/"
+out_dir = "../processed_data/crawler/url_stat/"
 os.makedirs(out_dir, exist_ok=True)
 
 
