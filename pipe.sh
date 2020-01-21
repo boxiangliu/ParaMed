@@ -10,6 +10,9 @@ python3 crawler/url_stat.py
 # Filter unwanted texts:
 python3 crawler/filter.py
 
+# Get length difference before and after filtering:
+python3 crawler/article_stat.py
+
 #################
 # Preprocessing #
 #################
