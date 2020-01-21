@@ -52,7 +52,7 @@ ax1.spines['right'].set_visible(False)
 ax1.spines['top'].set_visible(False)
 ax1.set_xticks(ticks=year_count["year"])
 ax1.set_xticklabels(labels=year_count["year"])
-
+ax1.set_ylabel("# Articles")
 
 # Plot count by article type:
 articles["type_abbr"] = articles["id"].apply(lambda x: re.sub("[0-9%]+", "", x))
@@ -68,9 +68,9 @@ ax2.set_xticklabels(labels=type_count["type"], rotation=90, linespacing=0.95)
 ax2.semilogy()
 ax2.spines['right'].set_visible(False)
 ax2.spines['top'].set_visible(False)
-
+ax2.set_ylabel("# Articles")
 
 # Save figure:
 fig.set_size_inches(5,5)
 fig.tight_layout()
-fig.savefig(f"{out_dir}/article_statistics.pdf")
+fig.savefig(f"{out_dir}/url_statistics.pdf")
