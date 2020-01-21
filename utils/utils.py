@@ -266,6 +266,26 @@ def read_article_urls(in_dir):
 	return articles
 
 
+abbrev = {"cp": "Clinical Practice",
+		"oa": "Original Article",
+		"ra": "Review Article",
+		"cpc": "Case Records",
+		"sr": "Special Report",
+		"ct": "Clinical Therapeutics",
+		"jw.na": "Journal Watch",
+		"clde": "Clinical Decisions",
+		"cps": "Clinical Prob Solving",
+		"p": "Perspective",
+		"e": "Editorial",
+		"cibr": "Clinical Implications\nof Basic Research",
+		"icm": "Images in Clinical Med",
+		"ms": "Medicine and Society",
+		"c": "Correspondence",
+		"sa": "Special Article",
+		"x": "Correction",
+		"hpr": "Health Policy Report"}
+
+
 def read_and_preprocess_article(path, lang):
 	article = get_article_as_lowercase_string(path)
 	

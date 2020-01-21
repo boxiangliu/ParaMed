@@ -19,7 +19,6 @@ from utils.utils import Container
 
 
 # Global variables:
-main_url = "https://www.nejmqianyan.cn/index.php?c=week&m=year"
 out_dir = "../processed_data/crawler/nejm/urls/"
 article_dir = "../processed_data/crawler/nejm/articles/"
 
@@ -60,13 +59,46 @@ def detect_paywall(driver):
 
 	paywall = driver.find_elements_by_xpath(xpath_query)
 	if paywall != []:
-		return True
-	else:
-		return False
+		xpath_query = "//a[@class='o-gateway__link' "\
+			"and @data-interactiontype='sign_in_click']"
+		sign_in_click = driver.find_element_by_xpath(xpath_query)
+		sign_in_click.click()
+
+		login = driver.find_element_by_id("login")
+		login.send_keys("svail-admin@baidu.com")
+
+		password = driver.find_element_by_id("password")
+		password.send_keys("Baidu2020")
+
+		driver.find_element_by_id("btnSignIn").click()
+		print("Signed in to NEJM.")
+
+
+def nejm_signin(driver):
+	driver.get("https://www.nejm.org/")
+
+	xpath_query = "//a[@data-interactiontype='sign_in_click']"
+	sign_in_click = driver.find_element_by_xpath(xpath_query)
+	sign_in_click.click()
+
+	login = driver.find_element_by_id("login")
+	login.send_keys("svail-admin@baidu.com")
+
+	password = driver.find_element_by_id("password")
+	password.send_keys("Baidu2020")
+
+	driver.find_element_by_id("btnSignIn").click()
+	print("Signed in to NEJM.")
+
+
+def nejm_signout(driver):
+	xpath_query = "//a[@data-interactiontype='sign_out_click']"
+	driver.find_elements_by_xpath(xpath_query)[0].click()
 
 
 def yxqy_login(driver):
 
+	driver.get("https://www.nejmqianyan.cn/index.php?c=week&m=year")
 	try:
 		xpath_query = "//a[@href='javascript:;' and @class='dropdown-toggle']"
 		dropdown = driver.find_element_by_xpath(xpath_query)
@@ -116,8 +148,8 @@ def crawl_zh_page(driver, article_id, zh_url, out_prefix, verbose=False):
 	driver.get(zh_url)
 	print_and_log(f"Crawling Chinese article: {article_id}.")
 
-	full_article = driver.find_element_by_id("nejm-article-content")
-	full_text = [x.strip() for x in full_article.text.split("\n")]
+	full_article = driver.find_element_by_id("nejm-article-content").text
+	full_text = [x.strip() for x in full_article.split("\n")]
 
 	with open(f"{out_prefix}.full.zh", "w") as f:
 		for i in full_text:
@@ -125,13 +157,13 @@ def crawl_zh_page(driver, article_id, zh_url, out_prefix, verbose=False):
 
 
 def crawl_en_page(driver, article_id, en_url, out_prefix, verbose=False):
-	driver.get(en_url)
-	
+
+	# driver.get(en_url)
 	if detect_dialog_window(driver):
 		close_dialog_window(driver)
 
-	if detect_paywall(driver):
-		raise RuntimeError("Paywall detected.")
+	# Sign in if paywalled.
+	detect_paywall(driver)
 
 	print_and_log(f"Crawling English article: {article_id}.")
 	article_type = re.sub("[0-9]+", "", article_id).replace("%", "")
@@ -139,28 +171,48 @@ def crawl_en_page(driver, article_id, en_url, out_prefix, verbose=False):
 
 	# Crawl article from NEJM website
 	if article_type != "jw.na":
-		full_article = driver.find_element_by_id("full")
-		full_text = [x.strip() for x in full_article.text.split("\n")]
+		driver.get(en_url)
+		sleep(1)
+		full_article = driver.find_element_by_id("full").text
+		full_text = [x.strip() for x in full_article.split("\n")]
+
+		try:
+			boxed_text = driver.find_element_by_class_name("m-boxed-text").text
+			full_text_no_box = [x.strip() for x in \
+				full_article.replace(boxed_text, "").split("\n")]
+			print("Found boxed text.")
+		except:
+			full_text_no_box = full_text
+			print("No boxed text.")
+
+		with open(f"{out_prefix}.nobox.en", "w") as f:
+			for i in full_text_no_box:
+				f.write(i + "\n")
 
 	# Crawl article from Journal Watch website
 	else:
-		try:
-			WebDriverWait(driver, timeout=60).\
-				until(EC.presence_of_element_located(\
-					(By.CLASS_NAME, "article-detail")))
-			sleep(1)
-		except:
-			print("Timeout!")
-			return
+		pass
+		# try:
+		# 	WebDriverWait(driver, timeout=60).\
+		# 		until(EC.presence_of_element_located(\
+		# 			(By.CLASS_NAME, "article-detail")))
+		# 	sleep(1)
+		# except:
+		# 	print("Timeout!")
+		# 	return
 
-		jw_login(driver)
-		full_article = driver.find_element_by_class_name("article-detail")
-		full_text = [x.strip() for x in full_article.text.split("\n")]
+		# jw_login(driver)
+		# full_article = driver.find_element_by_class_name("article-detail").text
+		# full_text = [x.strip() for x in full_article.split("\n")]
+		# full_text_no_box = full_text
 
-	with open(f"{out_prefix}.full.en", "w") as f:
-		for i in full_text:
-			f.write(i + "\n")
+	# with open(f"{out_prefix}.full.en", "w") as f:
+	# 	for i in full_text:
+	# 		f.write(i + "\n")
 
+	# with open(f"{out_prefix}.nobox.en", "w") as f:
+	# 	for i in full_text_no_box:
+	# 		f.write(i + "\n")
 
 def compare_zh_and_en(zh_fn, en_fn, epsilon = 2):
 	with open(zh_fn, "r") as f_zh, \
@@ -216,26 +268,12 @@ def crawl_all_urls(driver, container):
 
 				out_prefix = f"{article_dir}/{year}/{month}/{article_id}"
 				zh_out = f"{out_prefix}.full.zh"
-				en_out = f"{out_prefix}.full.en"
+				en_out = f"{out_prefix}.nobox.en"
 
-				to_run = True
-				if os.path.exists(zh_out) and os.path.exists(en_out):
-					comparison, zh_len, en_len = \
-						compare_zh_and_en(zh_out, en_out)
-
-					print_and_log("Found articles on disk.")
-					print_and_log("No. paragraphs (zh): {}".format(zh_len))
-					print_and_log("No. paragraphs (en): {}".format(en_len))
-					
-					if comparison == "equal":
-						print_and_log("zh and en articles are equivalent.")
-						to_run = False
-					else: 
-						print_and_log("zh and en articles differ - rerunning.")
-
-				if to_run:
-					# Crawl articles:
+				# Crawl articles:
+				if not os.path.exists(zh_out):
 					crawl_zh_page(driver, article_id, zh_url, out_prefix)
+				if not os.path.exists(en_out):
 					crawl_en_page(driver, article_id, en_url, out_prefix)
 
 				n += 1
@@ -251,8 +289,8 @@ def main():
 	# chrome_options.add_argument("--remote-debugging-port=9222")
 	driver = webdriver.Chrome(options=chrome_options)
 	
-	driver.get(main_url)
 	yxqy_login(driver)
+	nejm_signin(driver)
 
 	# Initialize container:
 	container = Container()
@@ -269,6 +307,7 @@ def main():
 			format="%(message)s", level=logging.DEBUG)
 		crawl_all_urls(driver, container)
 
+	nejm_signout(driver)
 
 if __name__ == "__main__":
 	main()

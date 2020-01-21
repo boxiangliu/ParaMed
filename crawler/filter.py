@@ -234,13 +234,17 @@ def main():
 		article_type = re.sub("[0-9%]+", "", article_id)
 
 		for lang in ["zh", "en"]:
-			in_fn = f"{article_dir}/{year}/{month:02}/{article_id}.full.{lang}"
+			if lang == "zh":
+				in_fn = f"{article_dir}/{year}/{month:02}/{article_id}.full.{lang}"
+			else:
+				in_fn = f"{article_dir}/{year}/{month:02}/{article_id}.nobox.{lang}"
 			print(f"path: {in_fn}")
 			article = read_article(in_fn)
 			article = stitch(article, lang)
 			article = filter(article, article_type, lang)
 
-			out_fn = in_fn.replace(".full.", ".filt.")
+			out_fn = in_fn.replace(".full.", ".filt.").\
+				replace(".nobox.",".filt.")
 			with open(out_fn, "w") as f: 
 				for line in article:
 					f.write(line + "\n")
