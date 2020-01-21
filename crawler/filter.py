@@ -233,20 +233,34 @@ def main():
 		article_id = row["id"]
 		article_type = re.sub("[0-9%]+", "", article_id)
 
-		for lang in ["zh", "en"]:
-			if lang == "zh":
-				in_fn = f"{article_dir}/{year}/{month:02}/{article_id}.full.{lang}"
-			else:
-				in_fn = f"{article_dir}/{year}/{month:02}/{article_id}.nobox.{lang}"
-			print(f"path: {in_fn}")
-			article = read_article(in_fn)
-			article = stitch(article, lang)
-			article = filter(article, article_type, lang)
 
-			out_fn = in_fn.replace(".full.", ".filt.").\
-				replace(".nobox.",".filt.")
-			with open(out_fn, "w") as f: 
-				for line in article:
+
+		zh_fn = f"{article_dir}/{year}/{month:02}/{article_id}.full.zh"
+		en_fn = f"{article_dir}/{year}/{month:02}/{article_id}.nobox.en"
+
+		print(f"path: {zh_fn}")
+		zh_article = read_article(zh_fn)
+		zh_article = stitch(zh_article, "zh")
+		zh_article = filter(zh_article, article_type, "zh")
+
+
+		print(f"path: {en_fn}")
+		en_article = read_article(en_fn)
+		en_article = stitch(en_article, "en")
+		en_article = filter(en_article, article_type, "en")
+
+		intersect = set(zh_article).intersection(set(en_article))
+
+		zh_out_fn = zh_fn.replace(".full.", ".filt.")
+		with open(zh_out_fn, "w") as f: 
+			for line in zh_article:
+				if line not in intersect:
+					f.write(line + "\n")
+
+		en_out_fn = en_fn.replace(".nobox.",".filt.")
+		with open(en_out_fn, "w") as f:
+			for line in en_article:
+				if line not in intersect:
 					f.write(line + "\n")
 
 

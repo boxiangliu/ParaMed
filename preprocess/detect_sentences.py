@@ -4,17 +4,17 @@ import sys
 import glob
 
 import pandas as pd
-sys.path.append("/mnt/scratch/boxiang/projects/med_translation/scripts")
+sys.path.append(".")
 from utils.utils import Article, get_nltk_sent_tokenizer,\
 	RegexSentenceTokenizer
 
-article_dir = "../processed_data/preprocess/articles_norm/"
+article_dir = "../processed_data/preprocess/articles/"
 sentence_dir = "../processed_data/preprocess/sentences/"
 if not os.path.exists(sentence_dir):
 	os.makedirs(sentence_dir)
 
 # English:
-article_paths=glob.glob("{}/*.en".format(article_dir))
+article_paths=glob.glob("{}/*.filt.en".format(article_dir))
 nltk_sent_tokenizer = get_nltk_sent_tokenizer(article_paths, lang="en")
 regex_sent_tokenizer = RegexSentenceTokenizer(regex="[^0-9]\.[0-9]{1,2}[0-9,-]*?[ \n]")
 
