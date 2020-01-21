@@ -12,12 +12,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-chrome_options = Options()
-chrome_options.add_argument("--no-sandbox")
-chrome_options.add_argument("--headless")
-chrome_options.add_argument("--disable-gpu")
-# chrome_options.add_argument("--remote-debugging-port=9222")
-
+###########
+# Crawler #
+###########
 def get_years(driver):
 	elements = driver.find_elements_by_class_name("field_video_a")
 	
@@ -248,6 +245,46 @@ class Container(dict):
 
 		print("{} Articles.".format(len(article_paths)), flush=True)
 		return article_paths
+
+
+def read_article_urls(in_dir):
+	container = []
+	article_files = glob.glob(f"{in_dir}/*/*.txt")
+	for fn in article_files:
+		print(f"Filename: {fn}")
+		container.append(pd.read_table(fn, header=None))
+	articles = pd.concat(container)
+	articles.columns = ["year", "month", \
+		"id", "zh_title", "en_title", \
+		"zh_url", "en_url"]
+	print(f"Total number of articles: {articles.shape[0]}")
+
+	# Check all articles are unique:
+	assert articles["id"].unique().shape[0] == articles.shape[0], \
+		"Duplicate articles exists."
+
+	return articles
+
+
+abbrev = {"cp": "Clinical Practice",
+		"oa": "Original Article",
+		"ra": "Review Article",
+		"cpc": "Case Records",
+		"sr": "Special Report",
+		"ct": "Clinical Therapeutics",
+		"jw.na": "Journal Watch",
+		"clde": "Clinical Decisions",
+		"cps": "Clinical Prob Solving",
+		"p": "Perspective",
+		"e": "Editorial",
+		"cibr": "Clinical Implications\nof Basic Research",
+		"icm": "Images in Clinical Med",
+		"ms": "Medicine and Society",
+		"c": "Correspondence",
+		"sa": "Special Article",
+		"x": "Correction",
+		"hpr": "Health Policy Report"}
+
 
 def read_and_preprocess_article(path, lang):
 	article = get_article_as_lowercase_string(path)

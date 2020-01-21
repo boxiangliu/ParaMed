@@ -1,6 +1,14 @@
+############
+# Crawling #
+############
 # Crawl NEJM websites:
 python3 crawler/crawl.py 
 
+# Get article type distribution:
+python3 crawler/url_stat.py 
+
+# Filter unwanted texts:
+python3 crawler/filter.py
 
 #################
 # Preprocessing #
