@@ -47,31 +47,9 @@ def detect_dialog_window(driver):
 
 
 def close_dialog_window(driver):
-
 	close_button = driver.find_element_by_xpath(
 		"//button[@class='featherlight-close-icon featherlight-close']")
 	close_button.click()
-
-
-def detect_paywall(driver):
-	xpath_query = "//a[@class='o-gateway__button o-gateway__button--secondary'" \
-				  " and @data-interactiontype='subscribe_click']"
-
-	paywall = driver.find_elements_by_xpath(xpath_query)
-	if paywall != []:
-		xpath_query = "//a[@class='o-gateway__link' "\
-			"and @data-interactiontype='sign_in_click']"
-		sign_in_click = driver.find_element_by_xpath(xpath_query)
-		sign_in_click.click()
-
-		login = driver.find_element_by_id("login")
-		login.send_keys("svail-admin@baidu.com")
-
-		password = driver.find_element_by_id("password")
-		password.send_keys("Baidu2020")
-
-		driver.find_element_by_id("btnSignIn").click()
-		print("Signed in to NEJM.")
 
 
 def nejm_signin(driver):
@@ -89,6 +67,15 @@ def nejm_signin(driver):
 
 	driver.find_element_by_id("btnSignIn").click()
 	print("Signed in to NEJM.")
+
+
+def detect_paywall(driver):
+	xpath_query = "//a[@class='o-gateway__button o-gateway__button--secondary'" \
+				  " and @data-interactiontype='subscribe_click']"
+
+	paywall = driver.find_elements_by_xpath(xpath_query)
+	if paywall != []:
+		nejm_signin(driver)
 
 
 def nejm_signout(driver):
@@ -158,7 +145,7 @@ def crawl_zh_page(driver, article_id, zh_url, out_prefix, verbose=False):
 
 def crawl_en_page(driver, article_id, en_url, out_prefix, verbose=False):
 
-	# driver.get(en_url)
+	driver.get(en_url)
 	if detect_dialog_window(driver):
 		close_dialog_window(driver)
 
@@ -171,7 +158,6 @@ def crawl_en_page(driver, article_id, en_url, out_prefix, verbose=False):
 
 	# Crawl article from NEJM website
 	if article_type != "jw.na":
-		driver.get(en_url)
 		sleep(1)
 		full_article = driver.find_element_by_id("full").text
 		full_text = [x.strip() for x in full_article.split("\n")]
@@ -185,34 +171,30 @@ def crawl_en_page(driver, article_id, en_url, out_prefix, verbose=False):
 			full_text_no_box = full_text
 			print("No boxed text.")
 
-		with open(f"{out_prefix}.nobox.en", "w") as f:
-			for i in full_text_no_box:
-				f.write(i + "\n")
-
 	# Crawl article from Journal Watch website
 	else:
-		pass
-		# try:
-		# 	WebDriverWait(driver, timeout=60).\
-		# 		until(EC.presence_of_element_located(\
-		# 			(By.CLASS_NAME, "article-detail")))
-		# 	sleep(1)
-		# except:
-		# 	print("Timeout!")
-		# 	return
+		try:
+			WebDriverWait(driver, timeout=60).\
+				until(EC.presence_of_element_located(\
+					(By.CLASS_NAME, "article-detail")))
+			sleep(1)
+		except:
+			print("Timeout!")
+			return
 
-		# jw_login(driver)
-		# full_article = driver.find_element_by_class_name("article-detail").text
-		# full_text = [x.strip() for x in full_article.split("\n")]
-		# full_text_no_box = full_text
+		jw_login(driver)
+		full_article = driver.find_element_by_class_name("article-detail").text
+		full_text = [x.strip() for x in full_article.split("\n")]
+		full_text_no_box = full_text
 
-	# with open(f"{out_prefix}.full.en", "w") as f:
-	# 	for i in full_text:
-	# 		f.write(i + "\n")
+	with open(f"{out_prefix}.full.en", "w") as f:
+		for i in full_text:
+			f.write(i + "\n")
 
-	# with open(f"{out_prefix}.nobox.en", "w") as f:
-	# 	for i in full_text_no_box:
-	# 		f.write(i + "\n")
+	with open(f"{out_prefix}.nobox.en", "w") as f:
+		for i in full_text_no_box:
+			f.write(i + "\n")
+
 
 def compare_zh_and_en(zh_fn, en_fn, epsilon = 2):
 	with open(zh_fn, "r") as f_zh, \
@@ -280,13 +262,12 @@ def crawl_all_urls(driver, container):
 
 
 def main():
-
 	# Initialize Chrome driver:
 	chrome_options = Options()
-	# chrome_options.add_argument("--no-sandbox")
-	# chrome_options.add_argument("--headless")
-	# chrome_options.add_argument("--disable-gpu")
-	# chrome_options.add_argument("--remote-debugging-port=9222")
+	chrome_options.add_argument("--no-sandbox")
+	chrome_options.add_argument("--headless")
+	chrome_options.add_argument("--disable-gpu")
+	chrome_options.add_argument("--remote-debugging-port=9222")
 	driver = webdriver.Chrome(options=chrome_options)
 	
 	yxqy_login(driver)
@@ -296,7 +277,7 @@ def main():
 	container = Container()
 	container.read_from_disk(out_dir)
 
-	# Uncomment the following lines if re-traversing the NEJM website.
+	# Traversing the NEJM website.
 	if traverse:
 		container.traverse(driver, out_dir)
 
@@ -308,6 +289,7 @@ def main():
 		crawl_all_urls(driver, container)
 
 	nejm_signout(driver)
+
 
 if __name__ == "__main__":
 	main()
