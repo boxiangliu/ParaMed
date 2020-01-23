@@ -289,7 +289,7 @@ abbrev = {"cp": "Clinical Practice",
 def read_and_preprocess_article(path, lang):
 	article = get_article_as_lowercase_string(path)
 	
-	if lang == "en":	
+	if lang == "en":
 		article = article.replace("\n. opens in new tab\n", "")
 	
 	elif lang == "zh":
@@ -304,6 +304,14 @@ def get_article_as_lowercase_string(path):
 	
 	with open(path, "r") as f:
 		article = f.read().lower()
+
+	return article
+
+
+def get_article(path):
+	
+	with open(path, "r") as f:
+		article = f.read()
 
 	return article
 
@@ -473,7 +481,9 @@ class Article():
 			if isinstance(sent_tokenizers, list) \
 			else [sent_tokenizers] 
 
-		self.article = read_and_preprocess_article(path, lang)
+		# self.article = read_and_preprocess_article(path, lang)
+		self.article = get_article(path)
+
 		self.paragraphs = [AnnoStr(x, self.sent_tokenizers) \
 			for x in self.article.split("\n") if x != ""]
 		self.filter_paragraphs()
