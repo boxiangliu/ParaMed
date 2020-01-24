@@ -63,6 +63,48 @@ def get_article_length(in_dir, article_urls, status):
 	return article_stat
 
 
+def p1():
+	# Make plot data:
+	plot_data = pd.concat([full_articles, filt_articles])
+	plot_data["type"] = plot_data["type_abbr"].apply(lambda x: abbrev[x])
+	plot_data = plot_data.groupby(["type", "status"]).\
+		agg(mean_diff=pd.NamedAgg("abs_diff", "mean")).reset_index()
+	plot_data["Filter"] = plot_data["status"].\
+		apply(lambda x: "Before" if x == "full" else "After")
+	order = plot_data[plot_data["status"]=="full"].\
+		sort_values("mean_diff", ascending=False)["type"].tolist()
+
+	# Plot:
+	fig, ax = plt.subplots(1,1)
+	ax.clear()
+	sns.barplot(x="type", y="mean_diff", hue="Filter", \
+		data=plot_data, order=order)
+	ax.spines['right'].set_visible(False)
+	ax.spines['top'].set_visible(False)
+	ax.set_xticklabels(labels=plot_data["type"], rotation=90, linespacing=0.95)
+	ax.set_xlabel(None)
+	ax.set_ylabel("Mean Abs Diff in \n# of Paragraphs")
+	fig.set_size_inches(5,3)
+	fig.tight_layout()
+	fig.savefig(f"{out_dir}/length_difference.pdf")
+
+def p2():
+	fig, (ax1, ax2) = plt.subplots(1,2)
+	ax1.scatter(x="zh_len", y="en_len", data=full_articles)
+	ax2.scatter(x="zh_len", y="en_len", data=filt_articles)
+	xlim = ylim = ax1.get_ylim()
+	ax1.plot(xlim, ylim, color="red", linestyle="dashed")
+	xlim = ylim = ax2.get_ylim()
+	ax2.plot(xlim, ylim, color="red", linestyle="dashed")
+	fig.text(0.5, 0.01, "No. Chinese Paragraphs", ha="center")
+	fig.text(0.0, 0.5, "No. English Paragraphs", va="center", rotation="vertical")
+	ax1.set_title("Pre-filter")
+	ax2.set_title("Post-filter")
+	fig.set_size_inches(5,2.7)
+	fig.tight_layout()
+	fig.savefig(f"{out_dir}/length_comparison.pdf")
+
+
 def main():
 	# Read article and urls:
 	article_urls = read_article_urls(urls_dir)
@@ -88,30 +130,8 @@ def main():
 	# 50%         0.000000
 	# 75%         0.000000
 	# max         5.000000
-
-	# Make plot data:
-	plot_data = pd.concat([full_articles, filt_articles])
-	plot_data["type"] = plot_data["type_abbr"].apply(lambda x: abbrev[x])
-	plot_data = plot_data.groupby(["type", "status"]).\
-		agg(mean_diff=pd.NamedAgg("abs_diff", "mean")).reset_index()
-	plot_data["Filter"] = plot_data["status"].\
-		apply(lambda x: "Before" if x == "full" else "After")
-	order = plot_data[plot_data["status"]=="full"].\
-		sort_values("mean_diff", ascending=False)["type"].tolist()
-
-	# Plot:
-	fig, ax = plt.subplots(1,1)
-	ax.clear()
-	sns.barplot(x="type", y="mean_diff", hue="Filter", \
-		data=plot_data, order=order)
-	ax.spines['right'].set_visible(False)
-	ax.spines['top'].set_visible(False)
-	ax.set_xticklabels(labels=plot_data["type"], rotation=90, linespacing=0.95)
-	ax.set_xlabel(None)
-	ax.set_ylabel("Mean Abs Diff in \n# of Paragraphs")
-	fig.set_size_inches(5,3)
-	fig.tight_layout()
-	fig.savefig(f"{out_dir}/length_statistics.pdf")
+	p1()
+	p2()
 
 if __name__ == "__main__":
 	main()
