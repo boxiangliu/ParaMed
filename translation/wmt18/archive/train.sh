@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Author : Thamme Gowda, Modified by Boxiang Liu
 # Created : Nov 05, 2019
-
 ONMT=/mnt/home/boxiang/projects/OpenNMT-py
 OUT=../processed_data/translation/wmt18/train_bpe/
 DATA=/mnt/data/boxiang/wmt18/
