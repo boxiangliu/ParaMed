@@ -100,9 +100,9 @@ while True:
 
         slurm_com = "sbatch --gres=gpu:%s --ntasks=1 "\
          "--cpus-per-task %s --partition=%s --job-name=%s "\
-         "--wrap \"%s \" --output=%s/slurm_log.txt;" % (
+         "--wrap \"%s \" --output=%s/slurm_log.%s.txt;" % (
             str(num_GPU), str(num_CPU), partition_name, \
-            job_name, new_cmd, save_dir)
+            job_name, new_cmd, save_dir, job_name)
 
         print("Slurm command: {}".format(slurm_com))
         os.system(slurm_com)
@@ -112,9 +112,9 @@ while True:
         logging.info("restart job: %s from scratch" % (job_name))
         slurm_com = "sbatch --gres=gpu:%s --ntasks=1 "\
          "--cpus-per-task %s --partition=%s --job-name=%s "\
-         "--wrap \"%s \" --output=%s/slurm_log.txt;" % (
+         "--wrap \"%s \" --output=%s/slurm_log.%s.txt;" % (
             str(num_GPU), str(num_CPU), partition_name, \
-            job_name, new_cmd, save_dir)
+            job_name, new_cmd, save_dir, job_name)
 
         print("Slurm command: {}".format(slurm_com))
         os.system(slurm_com)
