@@ -1,5 +1,4 @@
 bleualign=~/projects/Bleualign/bleualign.py
-moore=~/software/bilingual-sentence-aligner/
 data=/mnt/scratch/boxiang/projects/med_translation/processed_data/evaluation/nejm/translation/
 out_dir=/mnt/scratch/boxiang/projects/med_translation/processed_data/evaluation/nejm/align/
 [[ -f $out_dir ]] && mkdir -p $out_dir
