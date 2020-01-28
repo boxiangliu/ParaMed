@@ -13,7 +13,7 @@ for algo in ba ba2 gc moore hunalign; do
 	--tgt_fn ../processed_data/evaluation/nejm/align/$algo/align.${algo}-t \
 	--out_fn ../processed_data/evaluation/nejm/align/$algo/align_${algo}_zh_en.txt
 
-done 
+
 	# Evaluate algorithm:
 	python3 evaluation/wmt19_biomed/evaluate.py \
 	--align_fn ../processed_data/preprocess/manual_align/align_validation_zh_en.txt \
