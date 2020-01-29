@@ -123,8 +123,8 @@ def main():
 	# max       130.000000
 	filt_articles["abs_diff"].describe()
 	# count    1973.000000
-	# mean        0.315763
-	# std         0.687574
+	# mean        0.274709
+	# std         0.638960
 	# min         0.000000
 	# 25%         0.000000
 	# 50%         0.000000

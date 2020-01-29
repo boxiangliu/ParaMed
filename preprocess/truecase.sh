@@ -14,3 +14,10 @@ for f in $in_dir/*.filt.en; do
 	$moses_scripts/recaser/truecase.perl < $f \
 	> $out_dir/$base -model $out_dir/truecase-model.en
 done
+rm $out_dir/{truecase-model.en,corpus.en}
+
+for f in $in_dir/*.filt.zh; do
+	echo $f
+	base=$(basename $f)
+	ln $f $out_dir/$base
+done

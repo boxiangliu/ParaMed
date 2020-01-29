@@ -14,15 +14,6 @@ for article in `ls $data/*.$tgt`; do
 	> $out_dir/$base
 done
 
-# for article in `ls $data/*.$tgt`; do
-# 	echo $article
-# 	cat $article | \
-# 	$moses_scripts/tokenizer/lowercase.perl | \
-# 	$moses_scripts/tokenizer/normalize-punctuation.perl -l $tgt | \
-# 	$moses_scripts/tokenizer/tokenizer.perl -a -l $tgt  \
-# 	> $article.tok
-# done
-
 for article in `ls $data/*.$src`; do
 	echo $article
 	base=$(basename $article)

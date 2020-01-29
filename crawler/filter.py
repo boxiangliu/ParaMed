@@ -142,14 +142,19 @@ def filter(article, article_type, lang):
 				keep[i] = keep[i+1] = False
 			# Remove video and audio interviews:
 			elif text.strip() == "Video" or \
-				text.strip() == "Audio Interview":
+				text.strip() == "Interactive Graphic":
 				keep[i] = keep[i+1] = False
+			# Audio interview:
+			elif text.strip() == "Audio Interview":
+				keep[i] = keep[i+1] = keep[i+2] = False
 			# Remove QUICK TAKE:
 			elif text.strip() == "QUICK TAKE":
+				keep[i] = keep[i+1] = keep[i+2] = keep[i+3] = keep[i+4] = False
+			# Remove VISUAL ABSTRACT:
+			elif text.strip() == "VISUAL ABSTRACT":
 				keep[i] = keep[i+1] = keep[i+2] = False
 			# Remove intro and other text:
 			elif text.strip() == "Letters" or \
-				text.strip() == "Interactive Graphic" or \
 				text.strip() == "Download" or \
 				text.strip() == "Audio Full Text" or \
 				text.strip() == "Key Clinical Points" or \

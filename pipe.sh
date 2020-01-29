@@ -24,11 +24,15 @@ bash preprocess/normalize.sh
 
 # Step 2:
 # Split paragraphs into sentences: 
-python3 preprocess/detect_sentences.py 
+bash preprocess/detect_sentences/eserix.sh 
+python3 preprocess/detect_sentences/punkt.py
+python3 preprocess/detect_sentences/sent_stat.py
 
 # Step 3:
-# Tokenize sentences:
+# Tokenize sentences and change case:
 bash preprocess/tokenize.sh
+bash preprocess/lowercase.sh
+bash preprocess/truecase.sh
 
 
 ##################
@@ -69,6 +73,11 @@ bash evaluation/wmt19_biomed/evaluate.sh
 # Manually aligned gold-standard for NEJM articles:
 # Don't run.
 bash preprocess/manual_align.sh
+
+
+# Aligne with Moore's algorithm:
+bash evaluation/nejm/align/moore/input.sh
+bash evaluation/nejm/align/moore/align.sh
 
 # This will do necessary preprocessing (segmentation, tokenization, BPE)
 # and generate sentence-to-sentence translation. Additionally, it will
