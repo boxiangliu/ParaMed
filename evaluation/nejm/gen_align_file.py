@@ -13,9 +13,9 @@ tgt_fn = args.tgt_fn
 out_fn = args.out_fn
 
 # Examples:
-# src_fn = "../data/wmt19_biomed_modified/align.tok.mark.ba-s"
-# tgt_fn = "../data/wmt19_biomed_modified/align.tok.mark.ba.-t"
-# out_fn = "../data/wmt19_biomed_modified/align_bleualign_zh_en.txt"
+src_fn = "../processed_data/evaluation/nejm/align/hunalign/align/-0.60/align.zh"
+tgt_fn = "../processed_data/evaluation/nejm/align/hunalign/align/-0.60/align.en"
+out_fn = "test.txt"
 
 
 def extract_markers(sent):
@@ -30,13 +30,16 @@ def extract_markers(sent):
 	
 	if len(doc_ids) == 1:
 		doc_ids = doc_ids.pop()
+	elif len(doc_ids) == 0:
+		warnings.warn("Doc is empty")
+		doc_ids = ""
 	else:
 		warnings.warn("Doc should be unique.")
+		print(doc_ids)
 		doc_ids = ",".join(list(doc_ids))
 
 	sent_ids = ",".join(sent_ids)
 	return sent, doc_ids, sent_ids
-
 
 
 with open(src_fn, "r") as f1, open(tgt_fn, "r") as f2, \
@@ -46,13 +49,14 @@ with open(src_fn, "r") as f1, open(tgt_fn, "r") as f2, \
 		n += 1
 		src_sent, src_doc_ids, src_sent_ids = extract_markers(src_sent)
 		tgt_sent, tgt_doc_ids, tgt_sent_ids = extract_markers(tgt_sent)
-
-		if src_doc_ids != tgt_doc_ids:
+		if src_doc_ids == "" or tgt_doc_ids == "":
+			print("Found empty doc.")
+		elif src_doc_ids != tgt_doc_ids:
 			warnings.warn("Source doc ({}) and target doc ({}) "\
 				"should be identical.".format(src_doc_ids, tgt_doc_ids))
 			fout.write("{},{}\t{} <=> {}\t{}\t{}\t{}\n".format(src_doc_ids,
 				tgt_doc_ids, src_sent_ids, tgt_sent_ids, "AUTO", src_sent, 
-				tgt_sent))			
+				tgt_sent))
 		else:
 			fout.write("{}\t{} <=> {}\t{}\t{}\t{}\n".format(src_doc_ids,
 				src_sent_ids, tgt_sent_ids, "AUTO", src_sent, tgt_sent))
