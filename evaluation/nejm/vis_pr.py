@@ -11,7 +11,7 @@ parser = argparse.ArgumentParser(description="Visualize precision and recall"\
 	"of sentence alignment.")
 parser.add_argument("--in_dir", type=str, 
 	help="Path to precision recall tables.",
-	default="../processed_data/evaluation/nejm/evaluate/")
+	default="../processed_data/evaluation/nejm/evaluate/evaluate_bak/")
 parser.add_argument("--out_dir", type=str, help="Path to output directory.",
 	default="../processed_data/evaluation/nejm/vis_pr/")
 args = parser.parse_args()
@@ -42,4 +42,4 @@ pr = pd.melt(pr, id_vars=["type", "aligner"])
 p1 = sns.barplot(data=pr[pr["type"] == "1 - 1"], 
 	x="aligner", y="value", hue="variable")
 
-p1.figure.savefig(f"{out_dir}/pr.png")
+p1.figure.savefig(f"{out_dir}/pr.2.png")
