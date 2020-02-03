@@ -34,6 +34,11 @@ bash preprocess/tokenize.sh
 bash preprocess/lowercase.sh
 bash preprocess/truecase.sh
 
+# Step 4:
+# Manually align:
+bash preprocess/manual_align/copy.sh
+bash preprocess/manual_align/align.sh
+
 
 ##################
 # WMT18 baseline #
