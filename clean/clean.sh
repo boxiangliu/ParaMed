@@ -2,7 +2,7 @@
 # alignment by Moore's algorithm.
 
 in_dir=../processed_data/clean/concat/
-out_dir=../processed_data/clean/
+out_dir=../processed_data/clean/clean/
 
 ssh asimovbld-1
 docker run -it -d -v /mnt/scratch/boxiang/projects/med_translation/processed_data/clean/concat:/var/input/ paracrawl/bitextor
@@ -30,3 +30,8 @@ mv $in_dir/all.bifixer.txt $out_dir/all.bifixer.txt
 python3 clean/rm_dup.py \
 $out_dir/all.bifixer.txt \
 $out_dir/all.rm_dup.txt
+
+# Remove the hash and the score columns:
+mv $out_dir/all.rm_dup.txt temp
+cut -f1-4 temp > $out_dir/all.rm_dup.txt
+rm temp

@@ -114,6 +114,12 @@ bash alignment/moore/align.sh
 bash clean/concat.sh
 bash clean/clean.sh 
 
+##############
+# Split data #
+##############
+# Split data into training, dev, test:
+bash split_data/split_train_test.py
+
 #########################
 # Crowdsource Alignment #
 #########################
