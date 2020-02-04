@@ -111,6 +111,7 @@ bash alignment/moore/align.sh
 ############
 # Use bifixer to remove duplicate sentences:
 # Don't run (need docker container)
+bash clean/concat.sh
 bash clean/clean.sh 
 
 #########################
