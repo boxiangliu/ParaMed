@@ -48,7 +48,7 @@ test_docs = num_sent[num_sent["cumsum"] <= test_sent]["id"]
 
 
 print(f"Writing {test_sent} test sentences...")
-save_aligned_sent(f"{out_dir}/test", test_docs, align)
+save_aligned_sent(f"{out_dir}/nejm.test", test_docs, align)
 
 
 print("Selecting sentences for the dev set...")
@@ -57,9 +57,9 @@ dev_docs = num_sent[(num_sent["cumsum"] <= dev_sent) & (num_sent["cumsum"] > tes
 
 
 print(f"Writing {dev_sent-test_sent} dev sentences...")
-save_aligned_sent(f"{out_dir}/dev", dev_docs, align)
+save_aligned_sent(f"{out_dir}/nejm.dev", dev_docs, align)
 
 
 print(f"Writing training sentences...")
 train_docs = num_sent[num_sent["cumsum"] > dev_sent]["id"]
-save_aligned_sent(f"{out_dir}/train", train_docs, align)
+save_aligned_sent(f"{out_dir}/nejm.train", train_docs, align)
