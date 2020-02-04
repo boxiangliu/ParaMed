@@ -5,15 +5,13 @@
 import os
 from collections import defaultdict
 
-in_dir = "../processed_data/split_data/split_train_test/"
-src_fn = f"{in_dir}/train.zh"
-tgt_fn = f"{in_dir}/train.en"
+in_dir = "../processed_data/clean/"
+src_fn = f"{in_dir}/nejm.train.zh"
+tgt_fn = f"{in_dir}/nejm.train.en"
 
 out_dir = "../processed_data/subset/subset/"
 os.makedirs(out_dir, exist_ok=True)
-
-with open(src_fn, "r") as f:
-	N = len(f.readlines())
+N = 90861
 subset = [4000, 8000, 16000, 32000, 64000, N]
 
 # Open file handles:
@@ -32,7 +30,7 @@ with open(src_fn, "r") as fsrc, open(tgt_fn, "r") as ftgt:
 		for n in subset:
 			if i < n:
 				if i % 4000 == 0:
-					print(f"##### Line {i} #####.")
+					print("##### Line {i} #####".)
 					print(f"Writing to {out_dir}/nejm.train.{n}.{side}.")
 				out_fh[n]["zh"].write(src)
 				out_fh[n]["en"].write(tgt)
