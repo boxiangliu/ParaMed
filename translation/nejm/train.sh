@@ -17,7 +17,9 @@ TRAIN_SRC=$TRAIN_DATA/nejm.train.$n.zh
 TRAIN_TGT=$TRAIN_DATA/nejm.train.$n.en
 VALID_SRC=$VALID_DATA/nejm.dev.zh
 VALID_TGT=$VALID_DATA/nejm.dev.en
-# BPE_OPS=90000
+TEST_SRC=$VALID_DATA/nejm.test.zh
+TEST_TGT=$VALID_DATA/nejm.test.en
+
 
 echo "Output dir = $OUT"
 mkdir -p $OUT/data/$n/{zh2en,en2zh}
@@ -29,9 +31,10 @@ echo "BPE on source"
 
 $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.zh < $TRAIN_SRC > $OUT/data/$n/train.$n.zh
 $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.zh < $VALID_SRC > $OUT/data/$n/valid.zh
+$ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.zh < $TEST_SRC > $OUT/data/$n/test.zh
 $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.en < $TRAIN_TGT > $OUT/data/$n/train.$n.en
 $ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.en < $VALID_TGT > $OUT/data/$n/valid.en
-
+$ONMT/tools/apply_bpe.py -c $BPE_DIR/bpe-codes.en < $TEST_TGT > $OUT/data/$n/test.en
 
 echo "Step 1b: Preprocess"
 # zh -> en
