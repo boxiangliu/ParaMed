@@ -4,7 +4,7 @@
 
 ONMT=/mnt/home/boxiang/projects/OpenNMT-py
 FROM=../processed_data/translation/wmt18/train/
-OUT=../processed_data/translation/nejm/train/
+OUT=../processed_data/translation/nejm/train_denovo/
 TRAIN_DATA=../processed_data/subset/subset/
 VALID_DATA=../processed_data/split_data/split_train_test/
 BPE_DIR=../processed_data/translation/wmt18/train/data/
@@ -62,8 +62,6 @@ $python $ONMT/preprocess.py \
 
 echo "Step 2: Train"
 echo "Chinese to English"
-echo "Creating hard link for wmt18 baseline model."
-ln $FROM/models/zh2en_step_390000.pt $OUT/models/$n/zh2en_step_390000.pt
 
 $python restartsub.py TitanXx8 8 zh2en_${n} \
 "$python $ONMT/train.py \
@@ -77,7 +75,7 @@ $python restartsub.py TitanXx8 8 zh2en_${n} \
 -encoder_type transformer \
 -decoder_type transformer \
 -position_encoding \
--train_steps 490000 \
+-train_steps 100000 \
 -max_generator_batches 2 \
 -dropout 0.1 \
 -batch_size 4000 \
@@ -102,8 +100,6 @@ tee $OUT/models/$n/zh2en_restartsub.log &
 
 
 echo "English to Chinese"
-echo "Creating hard link for wmt18 baseline model."
-ln $FROM/models/en2zh_step_500000.pt $OUT/models/$n/en2zh_step_500000.pt
 
 $python restartsub.py TitanXx8 8 en2zh_${n} \
 "$python $ONMT/train.py \
@@ -117,7 +113,7 @@ $python restartsub.py TitanXx8 8 en2zh_${n} \
 -encoder_type transformer \
 -decoder_type transformer \
 -position_encoding \
--train_steps 600000 \
+-train_steps 100000 \
 -max_generator_batches 2 \
 -dropout 0.1 \
 -batch_size 4000 \
