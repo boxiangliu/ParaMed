@@ -13,9 +13,9 @@ tgt_fn = args.tgt_fn
 out_fn = args.out_fn
 
 # Examples:
-src_fn = "../processed_data/evaluation/nejm/align/hunalign/align/-0.60/align.zh"
-tgt_fn = "../processed_data/evaluation/nejm/align/hunalign/align/-0.60/align.en"
-out_fn = "test.txt"
+# src_fn = "../processed_data/evaluation/nejm/align/hunalign/align/-0.60/align.zh"
+# tgt_fn = "../processed_data/evaluation/nejm/align/hunalign/align/-0.60/align.en"
+# out_fn = "test.txt"
 
 
 def extract_markers(sent):

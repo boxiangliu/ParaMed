@@ -75,35 +75,38 @@ bash evaluation/wmt19_biomed/evaluate.sh
 
 
 #------ NEJM articles -------#
-# Manually aligned gold-standard for NEJM articles:
-# Don't run.
-bash preprocess/manual_align.sh
-
-
 # Aligne with Moore's algorithm:
 bash evaluation/nejm/align/moore/input.sh
 bash evaluation/nejm/align/moore/align.sh
 
-# This will do necessary preprocessing (segmentation, tokenization, BPE)
-# and generate sentence-to-sentence translation. Additionally, it will
-# also mark each sentence with doc#,# markers.
-# Must be run with GPUs. 
-bash evaluation/nejm/translate.sh
+# Align with Hunalign: 
+bash evaluation/nejm/align/hunalign/input.sh
+bash evaluation/nejm/align/hunalign/align.sh
 
-# Here I align with Bleualign, Gale-Church, and Moore's IBM 1 model.
-bash evaluation/nejm/align.sh
+# Align with Bleualign:
+bash evaluation/nejm/align/bleualign/input.sh
+bash evaluation/nejm/align/bleualign/translate.sh
+bash evaluation/nejm/align/bleualign/align.sh
+
 
 # Evaluate precision and recall for different algorithms:
 bash evaluation/nejm/evaluate.sh
 
 # Visually compare Precision-Recall across methods:
-python3 evaluation/nejm/vis_pr.py
+python3 evaluation/nejm/vis_pr_curve.py
 
 #####################
 # Machine Alignment #
 #####################
 # Use Moore's algorithm to align and create training set:
 bash alignment/moore/align.sh
+
+
+#########################
+# Crowdsource Alignment #
+#########################
+# Prepare articles
+python3 crowdsource/prep_articles.py
 
 
 ############
@@ -114,33 +117,27 @@ bash alignment/moore/align.sh
 bash clean/concat.sh
 bash clean/clean.sh 
 
+
 ##############
 # Split data #
 ##############
 # Split data into training, dev, test:
 bash split_data/split_train_test.py
 
-#########################
-# Crowdsource Alignment #
-#########################
-# Prepare articles
-python3 crowdsource/prep_articles.py
-
 
 ###############
 # Translation #
 ###############
-# Testing the WMT18 model on NEJM journal:
-python3 translation/wmt18/test.sh
-
-
 # Fine-tune on NEJM dataset:
-python3 translation/nejm/baigong/train.sh
+python3 translation/nejm/finetune.sh
+python3 translation/nejm/test_finetune.sh
 
+# Train on NEJM from scratch:
+python3 translation/nejm/train_denovo.sh
+python3 translation/nejm/test_denovo.sh
 
-# Test on NEJM dataset:
-python3 translation/nejm/baigong/test.sh
-
+# Plot bleu score:
+python3 translation/nejm/plot_bleu.py
 
 #################
 # Visualization #
