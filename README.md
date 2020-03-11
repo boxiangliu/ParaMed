@@ -15,5 +15,27 @@ If you are a NEJM subscriber through an institution or a personal account, as we
 
 ## Installation & Prerequisite 
 
+The code in this repository was written in `python 3.7`. 
+
+First you need to clone the repository: 
+
+`git clone https://github.com/boxiangliu/med_translation.git`
+
+Then install the following packages if they are not installed yet. 
+
+- selenium
+- numpy
+- pandas 
+- matplotlib
+- seaborn
+- nltk
 
 ## Reproducing the paper
+
+WARNING: Those without access to NEJM will likely not be able to run all steps in this repo. 
+
+### Crawl the NEJM website
+In `crawl/crawl.py`, replace the value of `nejm_username` and `nejm_password` with your credentials. Then run: 
+
+```python3 crawler/crawl.py```
+
