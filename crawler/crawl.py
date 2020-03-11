@@ -27,7 +27,7 @@ nejm_password = "######"
 out_dir = "../processed_data/crawler/nejm/urls/"
 article_dir = "../processed_data/crawler/nejm/articles/"
 
-traverse = False # Whether to get the article urls.
+traverse = True # Whether to get the article urls.
 crawl = True # Whether to get the article content.
 os.makedirs(out_dir, exist_ok=True)
 os.makedirs(article_dir, exist_ok=True)

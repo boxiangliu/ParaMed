@@ -19,9 +19,9 @@ The code in this repository was written in `python 3.7`.
 
 First you need to clone the repository: 
 
-`git clone https://github.com/boxiangliu/med_translation.git`
+	git clone https://github.com/boxiangliu/med_translation.git
 
-Then install the following packages if they are not installed yet. 
+Then install the following python packages if they are not installed yet. 
 
 - selenium
 - numpy
@@ -30,12 +30,69 @@ Then install the following packages if they are not installed yet.
 - seaborn
 - nltk
 
+Also install these packages outside of python: 
+
+- [eserix](https://github.com/emjotde/eserix)
+
 ## Reproducing the paper
 
 WARNING: Those without access to NEJM will likely not be able to run all steps in this repo. 
 
-### Crawl the NEJM website
+### 1. Crawl the NEJM website
 In `crawl/crawl.py`, replace the value of `nejm_username` and `nejm_password` with your credentials. Then run: 
 
-```python3 crawler/crawl.py```
+	python3 crawler/crawl.py
+
+This step crawls thousands of articles from NEJM and will take a number of hours. 
+
+### [Optional] Plot summary statistics of crawled articles
+
+To plot the distribution of articles by year and by type, run: 
+
+	python3 crawler/url_stat.py
+
+
+### Filter crawled articles
+The crawled articles are peppered with bits and pieces of noisy text. To remove them, run: 
+
+	python3 crawler/filter.py
+
+### [Optional] Compare pre- and post-filtered articles
+
+To see the effect of filtering on article lengths, run:
+
+	python3 crawler/article_stat.py
+
+## 2. Preprocessing
+We will normalize, break up paragraphs into sentences, tokenize and truecase. 
+
+### Normalize punctuations
+
+We will standardize English and Chinese punctuations. Run:  
+
+	bash preprocess/normalize.sh
+
+### Split paragraphs into sentences
+
+We will split English and Chinese paragraphs into sentences using eserix: 
+
+	bash preprocess/detect_sentences/eserix.sh 
+
+### [Optional] Compare eserix with punkt
+
+We can also split paragraphs with another popular python module called `punkt`, and compare the performance of the two algorithms. 
+
+	python3 preprocess/detect_sentences/punkt.py
+	python3 preprocess/detect_sentences/sent_stat.py
+
+### Tokenize and truecase
+The final preprocessing steps will be tokenization and truecasing
+
+	bash preprocess/tokenize.sh
+	bash preprocess/truecase.sh
+
+
+
+
+
 
