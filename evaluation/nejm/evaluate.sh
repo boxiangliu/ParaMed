@@ -4,20 +4,34 @@
 # gc: Gale-Church
 # moore: Moore's IBM 1 model.
 
-mkdir -p ../processed_data/evaluation/nejm/evaluate/
-for algo in ba ba2 gc moore; do
+in_dir=../processed_data/evaluation/nejm/align/
+out_dir=../processed_data/evaluation/nejm/evaluate/
+mkdir -p $out_dir
 
-	# This will generate src <=> tgt alignment. 
-	python3 evaluation/wmt19_biomed/gen_align_file.py \
-	--src_fn ../processed_data/evaluation/nejm/align/$algo/align.${algo}-s \
-	--tgt_fn ../processed_data/evaluation/nejm/align/$algo/align.${algo}-t \
-	--out_fn ../processed_data/evaluation/nejm/align/$algo/align_${algo}_zh_en.txt
+declare -A container=( [moore]=moore/align/ \
+	[hunalign]=hunalign/align/ [gale_church]=bleualign/align/gale_church/ \
+	[bleualign1]=bleualign/align/one_sided/ [bleualign2]=bleualign/align/two_sided/ )
+
+for algo in ${!container[@]}; do
+	echo Algorithm: $algo
+	dir=${container[$algo]}
+	for wd in $in_dir/$dir/*/; do
+		threshold=$(basename $wd)
+		echo $threshold
+
+		# This will generate src <=> tgt alignment. 
+		python3 evaluation/nejm/gen_align_file.py \
+		--src_fn $wd/align.zh \
+		--tgt_fn $wd/align.en \
+		--out_fn $out_dir/${algo}_${threshold}.align
 
 
-	# Evaluate algorithm:
-	python3 evaluation/wmt19_biomed/evaluate.py \
-	--align_fn ../processed_data/preprocess/alignment/align_validation_zh_en.txt \
-	--pred_fn ../processed_data/evaluation/nejm/align/$algo/align_${algo}_zh_en.txt \
-	--out_fn ../processed_data/evaluation/nejm/evaluate/${algo}.pr
+		# Evaluate algorithm:
+		python3 evaluation/nejm/evaluate.py \
+		--align_fn ../processed_data/preprocess/manual_align/alignment/align.txt \
+		--pred_fn $out_dir/${algo}_${threshold}.align \
+		--out_fn $out_dir/${algo}_${threshold}.pr
 
+
+	done
 done

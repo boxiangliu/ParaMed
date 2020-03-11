@@ -8,7 +8,7 @@
 # This section creates the alignment file.
 # Use the following commands to open Chinese and English docs side-by-side:
 sent_dir="/mnt/scratch/boxiang/projects\
-/med_translation/processed_data/preprocess/sentences/"
+/med_translation/processed_data/preprocess/archive/sentences/"
 
 awk '{print NR,$0}' $sent_dir/鼻咽癌的吉西他滨联合顺铂诱导化疗.zh | vim -
 awk '{print NR,$0}' $sent_dir/鼻咽癌的吉西他滨联合顺铂诱导化疗.en | vim -
@@ -49,13 +49,13 @@ awk '{print NR,$0}' $sent_dir/HIV相关癌症和疾病.en | vim -
 awk '{print NR,$0}' $sent_dir/2017年慢性阻塞性肺疾病诊断和治疗的GOLD指南.zh | vim -
 awk '{print NR,$0}' $sent_dir/2017年慢性阻塞性肺疾病诊断和治疗的GOLD指南.en | vim -
 
-# NOTE: The results are placed in ../processed_data/preprocess/alignment/align_validation_zh_en.txt
+# NOTE: The results are placed in ../processed_data/preprocess/manual_align/align_validation_zh_en.txt
 
 
 # This section creates two files
 # nejm_valid.en and nejm_valid.zh
 out_dir="/mnt/scratch/boxiang/projects/med_translation/\
-processed_data/preprocess/alignment/"
+processed_data/preprocess/manual_align/"
 
 articles=(鼻咽癌的吉西他滨联合顺铂诱导化疗 \
 	饮水可对饮用含糖饮料产生多大程度的对抗作用 \
@@ -100,13 +100,13 @@ done
 
 # Create validation set:
 python3 utils/gen_para_corp.py \
-	--align_fn ../processed_data/preprocess/alignment/align_validation_zh_en.txt \
-	--zh_fn ../processed_data/preprocess/alignment/nejm_valid.tok.zh \
-	--en_fn ../processed_data/preprocess/alignment/nejm_valid.tok.en \
-	--out_fn ../processed_data/preprocess/alignment/nejm_valid.parallel.tok
+	--align_fn ../processed_data/preprocess/manual_align/align_validation_zh_en.txt \
+	--zh_fn ../processed_data/preprocess/manual_align/nejm_valid.tok.zh \
+	--en_fn ../processed_data/preprocess/manual_align/nejm_valid.tok.en \
+	--out_fn ../processed_data/preprocess/manual_align/nejm_valid.parallel.tok
 
 python3 utils/gen_para_corp.py \
-	--align_fn ../processed_data/preprocess/alignment/align_validation_zh_en.txt \
-	--zh_fn ../processed_data/preprocess/alignment/nejm_valid.zh \
-	--en_fn ../processed_data/preprocess/alignment/nejm_valid.en \
-	--out_fn ../processed_data/preprocess/alignment/nejm_valid.parallel
+	--align_fn ../processed_data/preprocess/manual_align/align_validation_zh_en.txt \
+	--zh_fn ../processed_data/preprocess/manual_align/nejm_valid.zh \
+	--en_fn ../processed_data/preprocess/manual_align/nejm_valid.en \
+	--out_fn ../processed_data/preprocess/manual_align/nejm_valid.parallel

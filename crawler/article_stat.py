@@ -105,10 +105,27 @@ def p2():
 	fig.savefig(f"{out_dir}/length_comparison.pdf")
 
 
+def p3():
+	fig, ax = plt.subplots(1,1)
+	ax.spines['right'].set_visible(False)
+	ax.spines['top'].set_visible(False)
+	ax.scatter(x="zh_len", y="en_len", data=full_articles, color="#7f7f7f")
+	ax.scatter(x="zh_len", y="en_len", data=filt_articles, color="#1f77b4")
+	xlim = ylim = ax.get_ylim()
+	ax.plot(xlim, ylim, color="red", linestyle="dashed")
+	ax.legend(labels=["Diagonal", "Pre-filter", "Post-filter"])
+	ax.set_xlabel("No. Chinese Paragraphs")
+	ax.set_ylabel("No. English Paragraphs")
+	fig.set_size_inches(4,4)
+	fig.tight_layout()
+	fig.savefig(f"{out_dir}/length_comparison_overlay.pdf")
+
+
 def main():
 	# Read article and urls:
 	article_urls = read_article_urls(urls_dir)
 	article_urls = article_urls[article_urls["year"] != 2020] # Remove year 2020
+	# 1973 articles
 
 	full_articles = get_article_length(in_dir, article_urls, "full")
 	filt_articles = get_article_length(in_dir, article_urls, "filt")
@@ -123,8 +140,8 @@ def main():
 	# max       130.000000
 	filt_articles["abs_diff"].describe()
 	# count    1973.000000
-	# mean        0.315763
-	# std         0.687574
+	# mean        0.274709
+	# std         0.638960
 	# min         0.000000
 	# 25%         0.000000
 	# 50%         0.000000
@@ -132,6 +149,6 @@ def main():
 	# max         5.000000
 	p1()
 	p2()
-
+	p3()
 if __name__ == "__main__":
 	main()

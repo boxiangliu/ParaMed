@@ -24,11 +24,20 @@ bash preprocess/normalize.sh
 
 # Step 2:
 # Split paragraphs into sentences: 
-python3 preprocess/detect_sentences.py 
+bash preprocess/detect_sentences/eserix.sh 
+python3 preprocess/detect_sentences/punkt.py
+python3 preprocess/detect_sentences/sent_stat.py
 
 # Step 3:
-# Tokenize sentences:
+# Tokenize sentences and change case:
 bash preprocess/tokenize.sh
+bash preprocess/lowercase.sh
+bash preprocess/truecase.sh
+
+# Step 4:
+# Manually align:
+bash preprocess/manual_align/copy.sh
+bash preprocess/manual_align/align.sh
 
 
 ##################
@@ -66,24 +75,25 @@ bash evaluation/wmt19_biomed/evaluate.sh
 
 
 #------ NEJM articles -------#
-# Manually aligned gold-standard for NEJM articles:
-# Don't run.
-bash preprocess/manual_align.sh
+# Aligne with Moore's algorithm:
+bash evaluation/nejm/align/moore/input.sh
+bash evaluation/nejm/align/moore/align.sh
 
-# This will do necessary preprocessing (segmentation, tokenization, BPE)
-# and generate sentence-to-sentence translation. Additionally, it will
-# also mark each sentence with doc#,# markers.
-# Must be run with GPUs. 
-bash evaluation/nejm/translate.sh
+# Align with Hunalign: 
+bash evaluation/nejm/align/hunalign/input.sh
+bash evaluation/nejm/align/hunalign/align.sh
 
-# Here I align with Bleualign, Gale-Church, and Moore's IBM 1 model.
-bash evaluation/nejm/align.sh
+# Align with Bleualign:
+bash evaluation/nejm/align/bleualign/input.sh
+bash evaluation/nejm/align/bleualign/translate.sh
+bash evaluation/nejm/align/bleualign/align.sh
+
 
 # Evaluate precision and recall for different algorithms:
 bash evaluation/nejm/evaluate.sh
 
 # Visually compare Precision-Recall across methods:
-python3 evaluation/nejm/vis_pr.py
+python3 evaluation/nejm/vis_pr_curve.py
 
 #####################
 # Machine Alignment #
@@ -92,13 +102,6 @@ python3 evaluation/nejm/vis_pr.py
 bash alignment/moore/align.sh
 
 
-############
-# Clean up #
-############
-# Use bifixer to remove duplicate sentences:
-# Don't run (need docker container)
-bash clean/clean.sh 
-
 #########################
 # Crowdsource Alignment #
 #########################
@@ -106,20 +109,35 @@ bash clean/clean.sh
 python3 crowdsource/prep_articles.py
 
 
+############
+# Clean up #
+############
+# Use bifixer to remove duplicate sentences:
+# Don't run (need docker container)
+bash clean/concat.sh
+bash clean/clean.sh 
+
+
+##############
+# Split data #
+##############
+# Split data into training, dev, test:
+bash split_data/split_train_test.py
+
+
 ###############
 # Translation #
 ###############
-# Testing the WMT18 model on NEJM journal:
-python3 translation/wmt18/test.sh
-
-
 # Fine-tune on NEJM dataset:
-python3 translation/nejm/baigong/train.sh
+python3 translation/nejm/finetune.sh
+python3 translation/nejm/test_finetune.sh
 
+# Train on NEJM from scratch:
+python3 translation/nejm/train_denovo.sh
+python3 translation/nejm/test_denovo.sh
 
-# Test on NEJM dataset:
-python3 translation/nejm/baigong/test.sh
-
+# Plot bleu score:
+python3 translation/nejm/plot_bleu.py
 
 #################
 # Visualization #

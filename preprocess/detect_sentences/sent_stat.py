@@ -121,8 +121,8 @@ article_urls = article_urls[article_urls["year"] != 2020] # Remove year 2020
 punkt = get_article_length(punkt_dir, article_urls, "filt")
 punkt["abs_diff"].describe()
 # count    1973.000000
-# mean        2.655347
-# std         3.751648
+# mean        2.638621
+# std         3.738087
 # min         0.000000
 # 25%         1.000000
 # 50%         1.000000
@@ -132,8 +132,8 @@ punkt["abs_diff"].describe()
 eserix = get_article_length(eserix_dir, article_urls, "filt")
 eserix["abs_diff"].describe()
 # count    1973.000000
-# mean        1.538267
-# std         2.883678
+# mean        1.509377
+# std         2.853513
 # min         0.000000
 # 25%         0.000000
 # 50%         0.000000
