@@ -19,7 +19,7 @@ python3 crawler/article_stat.py
 # Preprocess NEJM articles
 # Step 1:
 # Turn English sentences into lower case and normalize 
-# punctuations, also remove :
+# punctuations, also remove:
 bash preprocess/normalize.sh
 
 # Step 2:
@@ -75,7 +75,7 @@ bash evaluation/wmt19_biomed/evaluate.sh
 
 
 #------ NEJM articles -------#
-# Aligne with Moore's algorithm:
+# Align with Moore's algorithm:
 bash evaluation/nejm/align/moore/input.sh
 bash evaluation/nejm/align/moore/align.sh
 
@@ -94,6 +94,7 @@ bash evaluation/nejm/evaluate.sh
 
 # Visually compare Precision-Recall across methods:
 python3 evaluation/nejm/vis_pr_curve.py
+
 
 #####################
 # Machine Alignment #
