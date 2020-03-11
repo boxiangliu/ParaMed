@@ -18,6 +18,11 @@ sys.path.append(".")
 from utils.utils import Container
 
 
+# Replace these with your NEJM credentials
+nejm_username = "######"
+nejm_password = "######"
+
+
 # Global variables:
 out_dir = "../processed_data/crawler/nejm/urls/"
 article_dir = "../processed_data/crawler/nejm/articles/"
@@ -60,10 +65,10 @@ def nejm_signin(driver):
 	sign_in_click.click()
 
 	login = driver.find_element_by_id("login")
-	login.send_keys("svail-admin@baidu.com")
+	login.send_keys(nejm_username)
 
 	password = driver.find_element_by_id("password")
-	password.send_keys("Baidu2020")
+	password.send_keys(nejm_password)
 
 	driver.find_element_by_id("btnSignIn").click()
 	print("Signed in to NEJM.")
