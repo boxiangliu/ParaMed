@@ -45,7 +45,8 @@ print("Selecting sentences for the test set...")
 num_sent["cumsum"] = num_sent["num_sent"].cumsum()
 test_sent = num_sent[num_sent["cumsum"] >= 2000]["cumsum"].iloc[0]
 test_docs = num_sent[num_sent["cumsum"] <= test_sent]["id"]
-
+# 39 articles
+# 2102 sentences
 
 print(f"Writing {test_sent} test sentences...")
 save_aligned_sent(f"{out_dir}/nejm.test", test_docs, align)
@@ -54,7 +55,8 @@ save_aligned_sent(f"{out_dir}/nejm.test", test_docs, align)
 print("Selecting sentences for the dev set...")
 dev_sent = num_sent[num_sent["cumsum"] >= 2000 + test_sent]["cumsum"].iloc[0]
 dev_docs = num_sent[(num_sent["cumsum"] <= dev_sent) & (num_sent["cumsum"] > test_sent)]["id"]
-
+# 40 articles
+# 2036 sentences
 
 print(f"Writing {dev_sent-test_sent} dev sentences...")
 save_aligned_sent(f"{out_dir}/nejm.dev", dev_docs, align)

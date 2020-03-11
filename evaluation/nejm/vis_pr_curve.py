@@ -50,11 +50,11 @@ def p1(pr):
 def p2(max_f1):
 	fig, ax = plt.subplots()
 	sns.barplot(x="aligner", y="max_f1", data=max_f1)
-	ax.set(xlabel="Aligner", ylabel="Maximum F1")
+	ax.set(xlabel="Aligner", ylabel="F1")
 	ax.set_xticklabels(["Microsoft", "Bleualign\nUnidirection", "Bleualign\nBidirection", "Gale-Church", "Hunalign"])
 	ax.spines['right'].set_visible(False)
 	ax.spines['top'].set_visible(False)
-	fig.set_size_inches(5,3)
+	fig.set_size_inches(4,3)
 	fig.tight_layout()
 	fig.savefig(f"{out_dir}/maximum_f1.pdf")
 
@@ -64,6 +64,7 @@ def main():
 	pr["f1"] = pr.apply(lambda x: get_f1(x["precision"], x["recall"]), axis=1)
 	max_f1 = pr.groupby("aligner").agg(max_f1=pd.NamedAgg("f1", "max")).reset_index()
 	max_f1 = max_f1.sort_values("max_f1", ascending=False)
+	max_f1 = max_f1.drop(index=3) # Drop hunalign
 	p2(max_f1)
 
 
