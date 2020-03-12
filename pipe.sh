@@ -88,7 +88,6 @@ bash evaluation/nejm/align/bleualign/input.sh
 bash evaluation/nejm/align/bleualign/translate.sh
 bash evaluation/nejm/align/bleualign/align.sh
 
-
 # Evaluate precision and recall for different algorithms:
 bash evaluation/nejm/evaluate.sh
 
@@ -99,7 +98,8 @@ python3 evaluation/nejm/vis_pr_curve.py
 #####################
 # Machine Alignment #
 #####################
-# Use Moore's algorithm to align and create training set:
+# Use Moore's algorithm to align:
+bash alignment/moore/input.sh
 bash alignment/moore/align.sh
 
 
@@ -129,6 +129,9 @@ bash split_data/split_train_test.py
 ###############
 # Translation #
 ###############
+# Subset the data: 
+python3 subset/subset.py
+
 # Fine-tune on NEJM dataset:
 python3 translation/nejm/finetune.sh
 python3 translation/nejm/test_finetune.sh

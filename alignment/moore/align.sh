@@ -16,3 +16,4 @@ done
 rm $in_dir/*{words,backtrace,nodes,train}
 rm $in_dir/{model-one,sentence-file-pair-list}
 rm $out_dir/wmt18.align.{zh,en}
+
