@@ -1,4 +1,4 @@
-# NEJM: A Parallel Corpus for Chinese-English Translation in the Medical Domain
+# ParaMed: A Parallel Corpus for Chinese-English Translation in the Medical Domain
 
 ## Description 
 `NEJM` is a Chinese-English parallel corpus crawled from the New England Journal of Medicine website. English articles are distributed through <https://www.nejm.org/> and Chinese articles are distributed through <http://nejmqianyan.cn/>. The corpus contains all article pairs (around 2000 pairs) since 2011. 
