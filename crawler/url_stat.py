@@ -52,7 +52,8 @@ ax1.spines['right'].set_visible(False)
 ax1.spines['top'].set_visible(False)
 ax1.set_xticks(ticks=year_count["year"])
 ax1.set_xticklabels(labels=year_count["year"])
-ax1.set_ylabel("# Articles")
+ax1.set_ylabel("No. Articles")
+ax1.text(-0.1, 1.15, "A", transform=ax1.transAxes, fontsize=16, fontweight="bold", va="top", ha="right")
 
 # Plot count by article type:
 articles["type_abbr"] = articles["id"].apply(lambda x: re.sub("[0-9%]+", "", x))
@@ -68,7 +69,8 @@ ax2.set_xticklabels(labels=type_count["type"], rotation=90, linespacing=0.95)
 ax2.semilogy()
 ax2.spines['right'].set_visible(False)
 ax2.spines['top'].set_visible(False)
-ax2.set_ylabel("# Articles")
+ax2.set_ylabel("No. Articles")
+ax2.text(-0.1, 1.15, "B", transform=ax2.transAxes, fontsize=16, fontweight="bold", va="top", ha="right")
 
 # Save figure:
 fig.set_size_inches(5,5)

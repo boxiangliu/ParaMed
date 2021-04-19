@@ -51,12 +51,26 @@ def p2(max_f1):
 	fig, ax = plt.subplots()
 	sns.barplot(x="aligner", y="max_f1", data=max_f1)
 	ax.set(xlabel="Aligner", ylabel="F1")
-	ax.set_xticklabels(["Microsoft", "Bleualign\nUnidirection", "Bleualign\nBidirection", "Gale-Church", "Hunalign"])
+	ax.set_xticklabels(["Microsoft", "Bleualign\nUnidirection", "Bleualign\nBidirection", "Gale-Church"])
 	ax.spines['right'].set_visible(False)
 	ax.spines['top'].set_visible(False)
 	fig.set_size_inches(4,3)
 	fig.tight_layout()
 	fig.savefig(f"{out_dir}/maximum_f1.pdf")
+
+
+def p3(f1_pr):
+	fig, ax = plt.subplots()
+	sns.barplot(x="aligner", y="value", hue="variable", data=f1_pr)
+	ax.set(xlabel=None, ylabel="Precision/Recall/F1")
+	ax.set_xticklabels(["Microsoft", "Uni-dir.\nBleualign", "Bi-dir.\nBleualign", "Gale-Church"])
+	ax.spines['right'].set_visible(False)
+	ax.spines['top'].set_visible(False)
+	plt.legend(bbox_to_anchor=(0.0, 1.0), ncol=3, loc="lower left", borderaxespad=0.1)
+	fig.set_size_inches(4,3)
+	fig.tight_layout()
+	fig.savefig(f"{out_dir}/precision_recall_f1.pdf")
+
 
 def main():
 	pr = read_precision_recall(in_dir)
@@ -67,6 +81,15 @@ def main():
 	max_f1 = max_f1.drop(index=3) # Drop hunalign
 	p2(max_f1)
 
+	f1_pr = []
+	for aligner, f1 in zip(max_f1["aligner"], max_f1["max_f1"]):
+		temp = pr[(pr['aligner'] == aligner) & (pr["f1"] == f1)].drop("threshold", axis=1).drop_duplicates()
+		f1_pr.append(temp)
+
+	f1_pr = pd.concat(f1_pr)
+	f1_pr = pd.melt(f1_pr, id_vars=["type", "aligner"])
+	f1_pr["variable"] = f1_pr["variable"].apply(lambda x: x.title())
+	p3(f1_pr)
 
 if __name__ == "__main__":
 	main()
