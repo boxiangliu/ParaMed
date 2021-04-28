@@ -16,19 +16,19 @@ onehourseconds = 60 * 60
 partitiontime = {}
 partitiontime["1080Ti_short"] = 1.8
 partitiontime["1080Ti_slong"] = 6 * 24
-partitiontime["1080Ti"] = 7
+partitiontime["1080Ti"] = 12
 partitiontime["1080Ti_spec"] = 24 + 12
-partitiontime["P100"] = 7
+partitiontime["P100"] = 12
 partitiontime["V100"] = 12
 
 
 partitiontime["TitanXx8_short"] = 1.8
 partitiontime["TitanXx8_slong"] = 6 * 24
-partitiontime["TitanXx8"] = 7
+partitiontime["TitanXx8"] = 12
 
 partitiontime["M40x8_short"] = 1.8
 partitiontime["M40x8_slong"] = 6 * 24
-partitiontime["M40x8"] = 7
+partitiontime["M40x8"] = 12
 
 
 excludepool = ["159"]
