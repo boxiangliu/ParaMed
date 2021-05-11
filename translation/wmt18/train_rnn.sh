@@ -55,25 +55,25 @@ echo "Output dir = $OUT"
 
 echo "Step 2: Train"
 
-python restartsub.py TitanXx8 8 zh2en \
-"python $ONMT/train.py \
--data $OUT/data/zh2en/processed \
--save_model $OUT/models/zh2en \
--layers 1 \
--rnn_type LSTM \
--rnn_size 512 \
--word_vec_size 512 \
--train_steps 500000 \
--batch_size 4000 \
--batch_type tokens \
--normalization tokens \
--optim adam \
--learning_rate 0.001 \
--label_smoothing 0.1 \
--valid_steps 10000 \
--save_checkpoint_steps 5000 \
--world_size 1 \
--gpu_ranks 0"
+# python restartsub.py TitanXx8 8 zh2en \
+# "python $ONMT/train.py \
+# -data $OUT/data/zh2en/processed \
+# -save_model $OUT/models/zh2en \
+# -layers 1 \
+# -rnn_type LSTM \
+# -rnn_size 512 \
+# -word_vec_size 512 \
+# -train_steps 500000 \
+# -batch_size 4000 \
+# -batch_type tokens \
+# -normalization tokens \
+# -optim adam \
+# -learning_rate 0.001 \
+# -label_smoothing 0.1 \
+# -valid_steps 10000 \
+# -save_checkpoint_steps 5000 \
+# -world_size 1 \
+# -gpu_ranks 0"
 
 
 python restartsub.py TitanXx8 8 en2zh \
