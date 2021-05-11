@@ -41,6 +41,7 @@ for i in {0..5}; do
         -src $src \
         -output $NEJM/test/$translation \
         -replace_unk -verbose \
+        -beam_size 1 \
         -gpu 0 > $NEJM/test/${translation}.log
 
 
@@ -79,6 +80,7 @@ for i in {0..5}; do
         -src $tgt \
         -output $NEJM/test/$translation \
         -replace_unk -verbose \
+        -beam_size 1 \
         -gpu 0 > $NEJM/test/${translation}.log
 
     echo "BPE decoding/detokenising target to match with references"
