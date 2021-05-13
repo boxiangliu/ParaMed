@@ -21,6 +21,7 @@ partitiontime["1080Ti_spec"] = 24 + 12
 partitiontime["P100"] = 12
 partitiontime["V100"] = 12
 partitiontime["V100_DGX"] = 12
+partitiontime["2080Ti"] = 12
 
 
 partitiontime["TitanXx8_short"] = 1.8
