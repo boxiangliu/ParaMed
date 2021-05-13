@@ -65,7 +65,7 @@ echo "Chinese to English"
 echo "Creating hard link for wmt18 baseline model."
 ln $FROM/models/zh2en_step_80000.pt $OUT/models/$n/zh2en_step_80000.pt
 
-$python restartsub.py V100_DGX 1 zh2en_${n} \
+$python restartsub.py 2080Ti 1 zh2en_${n} \
 "$python $ONMT/train.py \
 -data $OUT/data/$n/zh2en/processed \
 -save_model $OUT/models/$n/zh2en \
@@ -92,7 +92,7 @@ echo "English to Chinese"
 echo "Creating hard link for wmt18 baseline model."
 ln $FROM/models/en2zh_step_80000.pt $OUT/models/$n/en2zh_step_80000.pt
 
-$python restartsub.py V100_DGX 1 en2zh_${n} \
+$python restartsub.py 2080Ti 1 en2zh_${n} \
 "$python $ONMT/train.py \
 -data $OUT/data/$n/en2zh/processed \
 -save_model $OUT/models/$n/en2zh \
