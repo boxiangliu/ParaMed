@@ -90,7 +90,7 @@ tee $OUT/models/$n/zh2en_restartsub.log &
 
 echo "English to Chinese"
 echo "Creating hard link for wmt18 baseline model."
-ln $FROM/models/en2zh_step_500000.pt $OUT/models/$n/en2zh_step_500000.pt
+ln $FROM/models/en2zh_step_485000.pt $OUT/models/$n/en2zh_step_485000.pt
 
 $python restartsub.py TitanXx8 8 en2zh_${n} \
 "$python $ONMT/train.py \
@@ -100,7 +100,7 @@ $python restartsub.py TitanXx8 8 en2zh_${n} \
 -rnn_type LSTM \
 -rnn_size 512 \
 -word_vec_size 512 \
--train_steps 600000 \
+-train_steps 585000 \
 -batch_size 4000 \
 -batch_type tokens \
 -normalization tokens \
