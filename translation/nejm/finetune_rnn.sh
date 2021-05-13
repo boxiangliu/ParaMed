@@ -63,7 +63,7 @@ $python $ONMT/preprocess.py \
 echo "Step 2: Train"
 echo "Chinese to English"
 echo "Creating hard link for wmt18 baseline model."
-ln $FROM/models/zh2en_step_500000.pt $OUT/models/$n/zh2en_step_500000.pt
+ln $FROM/models/zh2en_step_80000.pt $OUT/models/$n/zh2en_step_80000.pt
 
 $python restartsub.py V100_DGX 1 zh2en_${n} \
 "$python $ONMT/train.py \
@@ -73,15 +73,15 @@ $python restartsub.py V100_DGX 1 zh2en_${n} \
 -rnn_type LSTM \
 -rnn_size 512 \
 -word_vec_size 512 \
--train_steps 600000 \
+-train_steps 100000 \
 -batch_size 4000 \
 -batch_type tokens \
 -normalization tokens \
 -optim adam \
 -learning_rate 0.001 \
 -label_smoothing 0.1 \
--valid_steps 10000 \
--save_checkpoint_steps 5000 \
+-valid_steps 2000 \
+-save_checkpoint_steps 2000 \
 -world_size 1 \
 -gpu_ranks 0 \
 -seed 42" | \
@@ -90,7 +90,7 @@ tee $OUT/models/$n/zh2en_restartsub.log &
 
 echo "English to Chinese"
 echo "Creating hard link for wmt18 baseline model."
-ln $FROM/models/en2zh_step_485000.pt $OUT/models/$n/en2zh_step_485000.pt
+ln $FROM/models/en2zh_step_80000.pt $OUT/models/$n/en2zh_step_80000.pt
 
 $python restartsub.py V100_DGX 1 en2zh_${n} \
 "$python $ONMT/train.py \
@@ -100,15 +100,15 @@ $python restartsub.py V100_DGX 1 en2zh_${n} \
 -rnn_type LSTM \
 -rnn_size 512 \
 -word_vec_size 512 \
--train_steps 585000 \
+-train_steps 100000 \
 -batch_size 4000 \
 -batch_type tokens \
 -normalization tokens \
 -optim adam \
 -learning_rate 0.001 \
 -label_smoothing 0.1 \
--valid_steps 10000 \
--save_checkpoint_steps 5000 \
+-valid_steps 2000 \
+-save_checkpoint_steps 2000 \
 -world_size 1 \
 -gpu_ranks 0 \
 -seed 42" | \
