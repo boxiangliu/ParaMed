@@ -133,15 +133,27 @@ bash split_data/split_train_test.py
 python3 subset/subset.py
 
 # Fine-tune on NEJM dataset:
-python3 translation/nejm/finetune.sh
-python3 translation/nejm/test_finetune.sh
+bash translation/nejm/finetune.sh
+bash translation/nejm/test_finetune.sh
 
 # Train on NEJM from scratch:
-python3 translation/nejm/train_denovo.sh
-python3 translation/nejm/test_denovo.sh
+bash translation/nejm/train_denovo.sh
+bash translation/nejm/test_denovo.sh
 
 # Plot bleu score:
 python3 translation/nejm/plot_bleu.py
+
+# Do the above things for a LSTM model: 
+# Fine-tune on NEJM dataset:
+bash translation/nejm/finetune_rnn.sh
+bash translation/nejm/test_finetune_rnn.sh
+
+# Train on NEJM from scratch:
+bash translation/nejm/train_denovo_rnn.sh
+bash translation/nejm/test_denovo_rnn.sh
+
+# Plot bleu score:
+python3 translation/nejm/plot_bleu_rnn.py
 
 #################
 # Visualization #
