@@ -16,13 +16,13 @@ src=$NEJM/test/test.zh
 tgt=$NEJM/test/test.en
 
 # Testing Chinese to English translation:
-models=($WMT18/models/zh2en_step_500000.pt  \
-    $NEJM/models/4000/zh2en_step_510000.pt \
-    $NEJM/models/8000/zh2en_step_510000.pt \
-    $NEJM/models/16000/zh2en_step_510000.pt \
-    $NEJM/models/32000/zh2en_step_510000.pt \
-    $NEJM/models/64000/zh2en_step_510000.pt \
-    $NEJM/models/93303/zh2en_step_510000.pt)
+models=($WMT18/models/zh2en_step_80000.pt  \
+    $NEJM/models/4000/zh2en_step_100000.pt \
+    $NEJM/models/8000/zh2en_step_100000.pt \
+    $NEJM/models/16000/zh2en_step_100000.pt \
+    $NEJM/models/32000/zh2en_step_100000.pt \
+    $NEJM/models/64000/zh2en_step_100000.pt \
+    $NEJM/models/93303/zh2en_step_100000.pt)
 
 translations=(wmt18.zh2en \
     nejm.4000.zh2en \
@@ -57,13 +57,13 @@ for i in {0..6}; do
 done
 
 # Testing English to Chinese translation:
-models=($WMT18/models/en2zh_step_485000.pt  \
-    $NEJM/models/4000/en2zh_step_495000.pt \
-    $NEJM/models/8000/en2zh_step_495000.pt \
-    $NEJM/models/16000/en2zh_step_495000.pt \
-    $NEJM/models/32000/en2zh_step_495000.pt \
-    $NEJM/models/64000/en2zh_step_495000.pt \
-    $NEJM/models/93303/en2zh_step_495000.pt)
+models=($WMT18/models/en2zh_step_80000.pt  \
+    $NEJM/models/4000/en2zh_step_100000.pt \
+    $NEJM/models/8000/en2zh_step_100000.pt \
+    $NEJM/models/16000/en2zh_step_100000.pt \
+    $NEJM/models/32000/en2zh_step_100000.pt \
+    $NEJM/models/64000/en2zh_step_100000.pt \
+    $NEJM/models/93303/en2zh_step_100000.pt)
 
 translations=(wmt18.en2zh \
     nejm.4000.en2zh \
